@@ -1,7 +1,7 @@
 from pathlib import Path
 from dandi.dandiapi import DandiAPIClient
 import pandas as pd
-import scripts.streamlit as st
+import streamlit as st
 
 client = DandiAPIClient("https://api.lincbrain.org/api")
 client.dandi_authenticate()
