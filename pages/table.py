@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 import json
 
+@st.cache_data(ttl='1d')
 def index_files():
     client = DandiAPIClient("https://api.lincbrain.org/api")
     client.dandi_authenticate()
