@@ -29,7 +29,7 @@ modalities = {'oct': 'PS-OCT',
 for dandiset in client.get_dandisets():
     latest_dandiset = dandiset.for_version('draft')
     for asset in latest_dandiset.get_assets():
-        print(f"Dandiset: {latest_dandiset}; Asset: {asset.path.split('/')[-1]}; Extension: {Path(asset.path).suffixes[0][1:]:<20}", end='\r')
+        print(f"Dandiset: {latest_dandiset}; Asset: {asset.path.split('/')[-1]:<40}", end='\r')
 
         metadata = asset.get_metadata()
         metadata_dict = metadata.model_dump(mode='json', exclude_none=True)
@@ -47,13 +47,15 @@ for dandiset in client.get_dandisets():
                          if key in asset.path.split('/')[-1].lower()), 
                          'Unknown')
 
+        suffix = Path(asset.path).suffixes[0][1:] if Path(asset.path).suffixes else ''
+
         df.loc[len(df)] = [latest_dandiset.identifier,
                             latest_dandiset.version.identifier,
                             subject,
                             modality,
                             asset.path, 
                             asset.path.split('/')[-1],
-                            Path(asset.path).suffixes[0][1:],
+                            suffix,
                             asset.path.split('/')[0],
                             metadata_dict['contentSize']]
 
