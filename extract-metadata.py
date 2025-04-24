@@ -40,6 +40,9 @@ for dandiset in client.get_dandisets():
                 subject = part.split("sub-")[1].split('_')[0]
                 break
 
+        if subject == 'Unknown' and any(filename in asset.path.split('/')[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
+            subject = 'n/a'
+
         modality = next((value for key, value in modalities.items() 
                          if key in asset.path.split('/')[-1].lower()), 
                          'Unknown')
