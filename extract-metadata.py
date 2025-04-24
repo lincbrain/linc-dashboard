@@ -7,6 +7,7 @@ from pathlib import Path
 client = DandiAPIClient("https://api.lincbrain.org/api")
 client.dandi_authenticate()
 
+# Create dataframe of all assets across all Dandisets
 dandisets = []
 for data in client.paginate("/dandisets/"):
     dandisets.append(RemoteDandiset.from_data(client, data))
