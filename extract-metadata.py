@@ -65,6 +65,6 @@ df_summary = pd.DataFrame(columns=["Modality",
 
 for _, value in modalities.items():
     df_summary.loc[len(df_summary)] = [value,
-                sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),
+                round(sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),2),
                 df[(df['Modality'] == value)]['Subject'].unique(),
                 df[(df['Modality'] == value)]['Extension'].unique()]
