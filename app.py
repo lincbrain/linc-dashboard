@@ -1,6 +1,8 @@
 import streamlit as st
 import importlib
 
+st.set_page_config(layout="wide")
+
 st.markdown("""
     <style>
         [data-testid="stSidebarNav"] {
