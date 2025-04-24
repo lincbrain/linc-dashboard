@@ -19,7 +19,7 @@ df = pd.DataFrame(columns=["Dandiset",
                            "Path",
                            "Filename",
                            "Extension",
-                           "Source/Raw/Derived Data",
+                           "Directory", # Container directory (e.g. source data, raw data, derivatives)
                            'Size (bytes)'])
 
 modalities = {'oct': 'PS-OCT',
@@ -51,7 +51,7 @@ for dandiset in client.get_dandisets():
                             modality,
                             asset.path, 
                             asset.path.split('/')[-1],
-                            ''.join(Path(asset.path).suffixes),
+                            Path(asset.path).suffixes[0][1:],
                             asset.path.split('/')[0],
                             metadata_dict['contentSize']]
 
