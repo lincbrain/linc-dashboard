@@ -11,21 +11,17 @@ st.markdown("""
 
 st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bblack.alpha.png")
 
-if st.sidebar.button("Home", use_container_width=True):
-    st.session_state["page"] = "Home"
 if st.sidebar.button("Summary", use_container_width=True):
     st.session_state["page"] = "Summary"
 if st.sidebar.button("List of all files", use_container_width=True):
     st.session_state["page"] = "Table"
 
 if "page" not in st.session_state:
-    st.session_state["page"] = "Home"
+    st.session_state["page"] = "Summary"
 
 def run_page(page_name):
-    if page_name == "Home":
+    if page_name == "Summary":
         page = importlib.import_module("pages.home")
-    elif page_name == "Summary":
-        page = importlib.import_module("pages.summary")
     elif page_name == "Table":
         page = importlib.import_module("pages.table")
     else:
