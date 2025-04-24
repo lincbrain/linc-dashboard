@@ -55,6 +55,7 @@ for dandiset in client.get_dandisets():
                             ''.join(Path(asset.path).suffixes),
                             asset.path.split('/')[0],
                             metadata_dict['contentSize']]
+
 # Summarize data across modalities
 modalities['unknown'] = 'Unknown'
 
