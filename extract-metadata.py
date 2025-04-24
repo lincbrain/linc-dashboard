@@ -32,6 +32,7 @@ modalities = {'oct': 'PS-OCT',
 for dandiset in client.get_dandisets():
     latest_dandiset = dandiset.for_version('draft')
     for asset in latest_dandiset.get_assets():
+        print(f"Dandiset: {latest_dandiset}; Asset: {asset.path.split('/')[-1]}", end='\r')
 
         metadata = asset.get_metadata()
         metadata_dict = metadata.model_dump(mode='json', exclude_none=True)
