@@ -15,8 +15,8 @@ st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/
 
 if st.sidebar.button("Summary", use_container_width=True):
     st.session_state["page"] = "Summary"
-if st.sidebar.button("List of all files", use_container_width=True):
-    st.session_state["page"] = "Table"
+if st.sidebar.button("All files", use_container_width=True):
+    st.session_state["page"] = "Files"
 
 if "page" not in st.session_state:
     st.session_state["page"] = "Summary"
@@ -24,8 +24,8 @@ if "page" not in st.session_state:
 def run_page(page_name):
     if page_name == "Summary":
         page = importlib.import_module("pages.home")
-    elif page_name == "Table":
-        page = importlib.import_module("pages.table")
+    elif page_name == "Files":
+        page = importlib.import_module("pages.files")
     else:
         st.write("Page not found.")
         return
