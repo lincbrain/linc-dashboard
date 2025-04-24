@@ -19,7 +19,7 @@ df = pd.DataFrame(columns=["Dandiset",
                            "Path",
                            "Filename",
                            "Extension",
-                           "Directory", # Container directory (e.g. source data, raw data, derivatives)
+                           "Directory", # Top-level directory (e.g. source data, raw data, derivatives)
                            'Size (bytes)'])
 
 modalities = {'oct': 'PS-OCT',
