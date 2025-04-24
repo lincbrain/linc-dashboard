@@ -7,10 +7,7 @@ client = DandiAPIClient("https://api.lincbrain.org/api")
 client.dandi_authenticate()
 
 # Create dataframe of all assets across all Dandisets
-dandisets = []
-for data in client.paginate("/dandisets/"):
-    dandisets.append(RemoteDandiset.from_data(client, data))
-print(f"Number of Dandisets: {len(dandisets)}")
+print(f"Processing {sum(1 for _ in client.get_dandisets())} Dandisets on lincbrain.org")
 
 df = pd.DataFrame(columns=["Dandiset",
                            "Version",
