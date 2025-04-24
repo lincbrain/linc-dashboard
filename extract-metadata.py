@@ -23,7 +23,8 @@ modalities = {'oct': 'PS-OCT',
               'df': 'Dark Field Microscopy',
               'xpct': 'HiP-CT',
               'dwi': 'DWI',
-              'fluo': 'LSM'}
+              'fluo': 'LSM',
+              'photo': 'Blockface photo'}
 
 for dandiset in client.get_dandisets():
     latest_dandiset = dandiset.for_version('draft')
