@@ -82,3 +82,6 @@ def summarize_modalities(df):
 if __name__ == "__main__":
     df = extract_assets()
     df_summary = summarize_modalities(df)
+
+    df.to_csv('./lincbrain_assets.csv', index=False)
+    df_summary.to_csv('./lincbrain_modalities.csv', index=False)
