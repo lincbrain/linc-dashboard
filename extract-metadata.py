@@ -1,6 +1,5 @@
 from dandi.dandiapi import DandiAPIClient
 from dandi.dandiapi import RemoteDandiset
-import numpy as np
 import pandas as pd
 from pathlib import Path
 
