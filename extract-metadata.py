@@ -23,11 +23,10 @@ df = pd.DataFrame(columns=["Dandiset",
                            'Size (bytes)'])
 
 modalities = {'oct': 'PS-OCT',
-                'df': 'Dark Field Microscopy',
-                'xpct': 'HiP-CT',
-                'dwi': 'DWI',
-                'fluo': 'LSM'
-                }
+              'df': 'Dark Field Microscopy',
+              'xpct': 'HiP-CT',
+              'dwi': 'DWI',
+              'fluo': 'LSM'}
 
 for dandiset in client.get_dandisets():
     latest_dandiset = dandiset.for_version('draft')
@@ -64,8 +63,8 @@ df_summary = pd.DataFrame(columns=["Modality",
                            "Subjects", 
                            "Extensions"])
 
-for key, value in modalities.items():
+for _, value in modalities.items():
     df_summary.loc[len(df_summary)] = [value,
-                       sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),
-                       df[(df['Modality'] == value)]['Subject'].unique(),
-                       df[(df['Modality'] == value)]['Extension'].unique()]
+                sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),
+                df[(df['Modality'] == value)]['Subject'].unique(),
+                df[(df['Modality'] == value)]['Extension'].unique()]
