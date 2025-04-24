@@ -59,9 +59,9 @@ for dandiset in client.get_dandisets():
 modalities['unknown'] = 'Unknown'
 
 df_summary = pd.DataFrame(columns=["Modality",
-                           "Size (GB)",
-                           "Subjects", 
-                           "Extensions"])
+                                   "Size (GB)",
+                                   "Subjects", 
+                                   "Extensions"])
 
 for _, value in modalities.items():
     df_summary.loc[len(df_summary)] = [value,
