@@ -74,8 +74,8 @@ def summarize_modalities(df):
     for _, value in modalities.items():
         df_summary.loc[len(df_summary)] = [value,
                     round(sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),2),
-                    df[(df['Modality'] == value)]['Subject'].unique(),
-                    df[(df['Modality'] == value)]['Extension'].unique()]
+                    ', '.join(df[(df['Modality'] == value)]['Subject'].unique()),
+                    ', '.join(df[(df['Modality'] == value)]['Extension'].unique())]
     
     return df_summary
 
