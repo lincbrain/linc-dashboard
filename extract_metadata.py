@@ -62,6 +62,25 @@ def extract_assets():
 
     return df
 
+# Summarize data across datasets
+def summarize_datasets(df):
+    modalities['unknown'] = 'Unknown'
+
+    df_datasets = pd.DataFrame(columns=["Dataset",
+                                        "Modality",
+                                        "Size (GB)",
+                                        "Subject", 
+                                        "Extension"])
+
+    for dataset in df['Dataset'].unique():
+        df_datasets.loc[len(df_datasets)] = [dataset,
+                    ','.join(df[(df['Dataset'] == dataset)]['Modality'].unique()),
+                    round(sum(df[(df['Dataset'] == dataset)]['Size (bytes)'])/(1000**3),2),
+                    ','.join(df[(df['Dataset'] == dataset)]['Subject'].unique()),
+                    ','.join(df[(df['Dataset'] == dataset)]['Extension'].unique())]
+
+    return df_datasets
+
 # Summarize data across modalities
 def summarize_modalities(df):
     modalities['unknown'] = 'Unknown'
