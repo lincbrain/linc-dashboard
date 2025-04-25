@@ -29,6 +29,7 @@ def extract_assets():
 
     for dataset in client.get_dandisets():
         latest_dataset = dataset.for_version('draft')
+        if latest_dataset.identifier != '000048': # Exclude OpenBNB dataset
             for asset in latest_dataset.get_assets():
                 print(f"Dataset: {latest_dataset}; Asset: {asset.path.split('/')[-1]:<80}", end='\r')
 
