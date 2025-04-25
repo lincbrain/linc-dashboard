@@ -15,9 +15,9 @@ def extract_assets():
     client = DandiAPIClient("https://api.lincbrain.org/api")
     client.dandi_authenticate()
 
-    print(f"Processing {sum(1 for _ in client.get_dandisets())} Dandisets on lincbrain.org")
+    print(f"Processing {sum(1 for _ in client.get_dandisets())} Datasets on lincbrain.org")
 
-    df = pd.DataFrame(columns=["Dandiset",
+    df = pd.DataFrame(columns=["Dataset",
                             "Version",
                             "Subject", 
                             "Modality",
@@ -27,38 +27,38 @@ def extract_assets():
                             "Directory", # Top-level directory (e.g. source data, raw data, derivatives)
                             'Size (bytes)'])
 
-    for dandiset in client.get_dandisets():
-        latest_dandiset = dandiset.for_version('draft')
-        for asset in latest_dandiset.get_assets():
-            print(f"Dandiset: {latest_dandiset}; Asset: {asset.path.split('/')[-1]:<40}", end='\r')
+    for dataset in client.get_dandisets():
+        latest_dataset = dataset.for_version('draft')
+            for asset in latest_dataset.get_assets():
+                print(f"Dataset: {latest_dataset}; Asset: {asset.path.split('/')[-1]:<80}", end='\r')
 
-            metadata = asset.get_metadata()
-            metadata_dict = metadata.model_dump(mode='json', exclude_none=True)
+                metadata = asset.get_metadata()
+                metadata_dict = metadata.model_dump(mode='json', exclude_none=True)
 
-            subject = 'Unknown'
-            for part in asset.path.split('/'):
-                if part.startswith("sub-"):
-                    subject = part.split("sub-")[1].split('_')[0]
-                    break
+                subject = 'Unknown'
+                for part in asset.path.split('/'):
+                    if part.startswith("sub-"):
+                        subject = part.split("sub-")[1].split('_')[0]
+                        break
 
-            if subject == 'Unknown' and any(filename in asset.path.split('/')[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
-                subject = 'n/a'
+                if subject == 'Unknown' and any(filename in asset.path.split('/')[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
+                    subject = 'n/a'
 
-            modality = next((value for key, value in modalities.items() 
-                            if key in asset.path.split('/')[-1].lower()), 
-                            'Unknown')
+                modality = next((value for key, value in modalities.items() 
+                                if key in asset.path.split('/')[-1].lower()), 
+                                'Unknown')
 
-            suffix = Path(asset.path).suffixes[0][1:] if Path(asset.path).suffixes else ''
+                suffix = Path(asset.path).suffixes[0][1:] if Path(asset.path).suffixes else ''
 
-            df.loc[len(df)] = [latest_dandiset.identifier,
-                                latest_dandiset.version.identifier,
-                                subject,
-                                modality,
-                                asset.path, 
-                                asset.path.split('/')[-1],
-                                suffix,
-                                asset.path.split('/')[0],
-                                metadata_dict['contentSize']]
+                df.loc[len(df)] = [latest_dataset.identifier,
+                                    latest_dataset.version.identifier,
+                                    subject,
+                                    modality,
+                                    asset.path, 
+                                    asset.path.split('/')[-1],
+                                    suffix,
+                                    asset.path.split('/')[0],
+                                    metadata_dict['contentSize']]
 
     return df
 
@@ -85,22 +85,23 @@ def summarize_datasets(df):
 def summarize_modalities(df):
     modalities['unknown'] = 'Unknown'
 
-    df_summary = pd.DataFrame(columns=["Modality",
+    df_modalities = pd.DataFrame(columns=["Modality",
                                     "Size (GB)",
-                                    "Subjects", 
-                                    "Extensions"])
-
+                                    "Subject", 
+                                    "Extension"])
     for _, value in modalities.items():
-        df_summary.loc[len(df_summary)] = [value,
+        df_modalities.loc[len(df_modalities)] = [value,
                     round(sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),2),
-                    ', '.join(df[(df['Modality'] == value)]['Subject'].unique()),
-                    ', '.join(df[(df['Modality'] == value)]['Extension'].unique())]
+                    ','.join(df[(df['Modality'] == value)]['Subject'].unique()),
+                    ','.join(df[(df['Modality'] == value)]['Extension'].unique())]
     
-    return df_summary
+    return df_modalities
 
 if __name__ == "__main__":
     df = extract_assets()
-    df_summary = summarize_modalities(df)
+    df_datasets = summarize_datasets(df)
+    df_modalities = summarize_modalities(df)
 
     df.to_csv('./lincbrain_assets.csv', index=False)
-    df_summary.to_csv('./lincbrain_modalities.csv', index=False)
+    df_datasets.to_csv('./lincbrain_datasets.csv', index=False)
+    df_modalities.to_csv('./lincbrain_modalities.csv', index=False)
