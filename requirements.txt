@@ -1,3 +1,5 @@
 dandi
 pandas
 streamlit
+plotly
+numpy
