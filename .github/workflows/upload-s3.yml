@@ -46,6 +46,4 @@ jobs:
 
     - name: Upload CSV files to S3
       run: |
-        aws s3 cp lincbrain_assets.csv s3://${{ env.S3_BUCKET }}/
-        aws s3 cp lincbrain_datasets.csv s3://${{ env.S3_BUCKET }}/
-        aws s3 cp lincbrain_modalities.csv s3://${{ env.S3_BUCKET }}/
+        aws s3 cp *.csv s3://${{ env.S3_BUCKET }}/
