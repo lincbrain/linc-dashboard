@@ -13,8 +13,9 @@ modalities = {'oct': 'PS-OCT',
 def extract_assets():
     client = DandiAPIClient("https://api.lincbrain.org/api")
     client.dandi_authenticate()
+    dandisets = client.get_dandisets()
 
-    print(f"Processing {sum(1 for _ in client.get_dandisets())} Dandisets on lincbrain.org")
+    print(f"Processing {sum(1 for _ in dandisets)} Dandisets on lincbrain.org")
 
     df = pd.DataFrame(columns=["Dandiset",
                             "Version",
@@ -26,7 +27,7 @@ def extract_assets():
                             "Directory", # Top-level directory (e.g. source data, raw data, derivatives)
                             'Size (bytes)'])
 
-    for dandiset in client.get_dandisets():
+    for dandiset in dandisets:
         latest_dandiset = dandiset.for_version('draft')
         for asset in latest_dandiset.get_assets():
             print(f"Dandiset: {latest_dandiset}; Asset: {asset.path.split('/')[-1]:<40}", end='\r')
