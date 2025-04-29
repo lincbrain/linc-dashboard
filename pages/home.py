@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import streamlit as st
 import numpy as np
@@ -8,17 +9,32 @@ def main():
     st.title("LINC Dashboard")
     st.write("Displayed is a summary of all data on lincbrain.org.  This dashboard is intended for the LINC project investigators.  Data is indexed daily.")
 
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+
     # List summary of all datasets
     st.title("Datasets")
 
-    df_datasets = pd.read_csv('lincbrain_datasets.csv')
+    df_datasets = pd.read_csv(
+        f"s3://linc-dashboard/lincbrain_datasets.csv",
+        storage_options={
+            "key": AWS_ACCESS_KEY_ID,
+            "secret": AWS_SECRET_ACCESS_KEY,
+        },
+    )
     df_datasets_sorted = df_datasets.sort_values(by='Dataset')
 
     st.dataframe(df_datasets_sorted, hide_index=True, column_config={col: {'alignment':"left"} for col in df_datasets_sorted.columns})
 
     # Plot summary of all modalities
     st.title("Modalities")
-    df_modalities = pd.read_csv('lincbrain_modalities.csv')
+    df_modalities = pd.read_csv(
+        f"s3://linc-dashboard/lincbrain_modalities.csv",
+        storage_options={
+            "key": AWS_ACCESS_KEY_ID,
+            "secret": AWS_SECRET_ACCESS_KEY,
+        },
+    )
     df_modalities_sorted = df_modalities.sort_values(by='Modality')
     
     subjects_unique = list(set([value.strip() for item in df_modalities_sorted['Subject'] 
