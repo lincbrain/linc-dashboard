@@ -44,7 +44,7 @@ jobs:
     - name: Run Python script
       env:
         DANDI_API_KEY: ${{ secrets.DANDI_API_KEY }}
-      run: python extract-metadata.py
+      run: python extract_metadata.py
 
     - name: Upload CSV files to S3
       run: |
