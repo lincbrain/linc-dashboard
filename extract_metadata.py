@@ -1,5 +1,4 @@
 from dandi.dandiapi import DandiAPIClient
-from dandi.dandiapi import RemoteDandiset
 import pandas as pd
 from pathlib import Path
 
@@ -14,8 +13,9 @@ modalities = {'oct': 'PS-OCT',
 def extract_assets():
     client = DandiAPIClient("https://api.lincbrain.org/api")
     client.dandi_authenticate()
+    dandisets = client.get_dandisets()
 
-    print(f"Processing {sum(1 for _ in client.get_dandisets())} Datasets on lincbrain.org")
+    print(f"Processing {sum(1 for _ in dandisets)} Datasets on lincbrain.org")
 
     df = pd.DataFrame(columns=["Dataset",
                             "Version",
@@ -27,26 +27,28 @@ def extract_assets():
                             "Directory", # Top-level directory (e.g. source data, raw data, derivatives)
                             'Size (bytes)'])
 
-    for dataset in client.get_dandisets():
+    for dataset in dandisets:
         latest_dataset = dataset.for_version('draft')
         if latest_dataset.identifier not in ['000048', '000004']: # Exclude OpenBNB dataset and mouse LSM dataset
             for asset in latest_dataset.get_assets():
-                print(f"Dataset: {latest_dataset}; Asset: {asset.path.split('/')[-1]:<80}", end='\r')
+                asset_split = asset.path.split('/')
+
+                print(f"Dataset: {latest_dataset}; Asset: {asset_split[-1]:<80}", end='\r')
 
                 metadata = asset.get_metadata()
                 metadata_dict = metadata.model_dump(mode='json', exclude_none=True)
 
                 subject = 'Unknown'
-                for part in asset.path.split('/'):
+                for part in asset_split:
                     if part.startswith("sub-"):
                         subject = part.split("sub-")[1].split('_')[0]
                         break
 
-                if subject == 'Unknown' and any(filename in asset.path.split('/')[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
+                if subject == 'Unknown' and any(filename in asset_split[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
                     subject = 'n/a'
 
                 modality = next((value for key, value in modalities.items() 
-                                if key in asset.path.split('/')[-1].lower()), 
+                                if key in asset_split[-1].lower()), 
                                 'Unknown')
 
                 suffix = Path(asset.path).suffixes[0][1:] if Path(asset.path).suffixes else ''
@@ -56,9 +58,9 @@ def extract_assets():
                                     subject,
                                     modality,
                                     asset.path, 
-                                    asset.path.split('/')[-1],
+                                    asset_split[-1],
                                     suffix,
-                                    asset.path.split('/')[0],
+                                    asset_split[0],
                                     metadata_dict['contentSize']]
 
     return df
