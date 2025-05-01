@@ -104,3 +104,7 @@ if __name__ == "__main__":
     df = extract_assets()
     df_datasets = summarize_datasets(df)
     df_modalities = summarize_modalities(df)
+
+    df.to_csv('./lincbrain_assets.csv', index=False)
+    df_datasets.to_csv('./lincbrain_datasets.csv', index=False)
+    df_modalities.to_csv('./lincbrain_modalities.csv', index=False)
