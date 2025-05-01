@@ -69,8 +69,6 @@ def extract_assets():
 
 # Summarize data across datasets
 def summarize_datasets(df):
-    modalities['unknown'] = 'Unknown'
-
     df_datasets = pd.DataFrame(columns=["Dataset",
                                         "Modality",
                                         "Size (GB)",
