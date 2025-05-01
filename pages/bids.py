@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import streamlit as st
 
-@st.cache_data(ttl='1d')
 def main():
     st.title("All non-BIDS compliant files on lincbrain.org")
 

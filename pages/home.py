@@ -4,7 +4,6 @@ import streamlit as st
 import numpy as np
 import plotly.express as px
 
-@st.cache_data(ttl='1d')
 def main():
     st.title("LINC Dashboard")
     st.write("Displayed is a summary of all data on lincbrain.org.  This dashboard is intended for the LINC project investigators.  Data is indexed daily.")
