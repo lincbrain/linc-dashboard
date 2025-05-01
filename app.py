@@ -1,7 +1,14 @@
 import streamlit as st
 import importlib
+from PIL import Image
 
-st.set_page_config(layout="wide")
+im = Image.open("assets/favicon.ico")
+st.set_page_config(
+    page_title="LINC Dashboard",   
+    page_icon=im,                  
+    layout="wide", 
+    initial_sidebar_state="expanded"
+    )
 
 st.markdown("""
     <style>

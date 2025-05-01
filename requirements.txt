@@ -1,6 +1,7 @@
 dandi
 pandas
 streamlit
+pillow
 plotly
 numpy
 s3fs
