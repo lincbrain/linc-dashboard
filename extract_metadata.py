@@ -3,10 +3,10 @@ import pandas as pd
 from pathlib import Path
 
 modalities = {'oct': 'PS-OCT',
-              'df': 'Dark Field Microscopy',
+              'df': 'Dark field microscopy',
               'xpct': 'HiP-CT',
-              'dwi': 'DWI',
-              'fluo': 'LSM',
+              'dwi': 'Diffusion MRI',
+              'fluo': 'Light sheet microscopy',
               'photo': 'Blockface photo'}
 
 # Create dataframe of all assets across all datasets
