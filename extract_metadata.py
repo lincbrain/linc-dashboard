@@ -15,9 +15,9 @@ def extract_assets():
     client.dandi_authenticate()
     dandisets = client.get_dandisets()
 
-    print(f"Processing {sum(1 for _ in dandisets)} Dandisets on lincbrain.org")
+    print(f"Processing {sum(1 for _ in dandisets)} Datasets on lincbrain.org")
 
-    df = pd.DataFrame(columns=["Dandiset",
+    df = pd.DataFrame(columns=["Dataset",
                             "Version",
                             "Subject", 
                             "Modality",
