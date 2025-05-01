@@ -86,13 +86,14 @@ def summarize_datasets(df):
 
 # Summarize data across modalities
 def summarize_modalities(df):
-    modalities['unknown'] = 'Unknown'
+    local_modalities = modalities.copy()
+    local_modalities['unknown'] = 'Unknown'
 
     df_modalities = pd.DataFrame(columns=["Modality",
                                     "Size (GB)",
                                     "Subject", 
                                     "Extension"])
-    for _, value in modalities.items():
+    for _, value in local_modalities.items():
         df_modalities.loc[len(df_modalities)] = [value,
                     round(sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),2),
                     ','.join(df[(df['Modality'] == value)]['Subject'].unique()),
