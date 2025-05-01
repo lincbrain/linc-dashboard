@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_theme import st_theme
 import importlib
 from PIL import Image
 
@@ -18,7 +19,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bblack.alpha.png")
+theme = st_theme()
+if theme and theme['backgroundColor'] == '#000000':
+    st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bblack.alpha.png")
+else:
+    st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bwhite.alpha.png")
 
 if st.sidebar.button("Summary", use_container_width=True):
     st.session_state["page"] = "Summary"

@@ -1,6 +1,7 @@
 dandi
 pandas
 streamlit
+st-theme
 pillow
 plotly
 numpy
