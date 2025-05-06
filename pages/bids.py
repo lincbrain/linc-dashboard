@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import streamlit as st
-from ..utils import load_dataset
+from utils import load_dataset
 
 def main():
     st.title("All non-BIDS compliant files on lincbrain.org")

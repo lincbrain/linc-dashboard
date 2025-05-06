@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 import numpy as np
 import plotly.express as px
-from ..utils import load_dataset
+from utils import load_dataset
 
 def main():
     st.title("LINC Dashboard")
