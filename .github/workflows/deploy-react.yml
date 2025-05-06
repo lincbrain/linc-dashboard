@@ -19,9 +19,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
+          cache-dependency-path: subdir/package-lock.json
           node-version: '18'
           cache: 'npm'
-        working-directory: ./react
 
       - name: Install dependencies
         working-directory: ./react
@@ -36,4 +36,3 @@ jobs:
         with:
           folder: build
           branch: gh-pages
-        working-directory: ./react
