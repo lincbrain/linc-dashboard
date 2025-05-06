@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          cache-dependency-path: subdir/package-lock.json
+          cache-dependency-path: ./react/package-lock.json
           node-version: '18'
           cache: 'npm'
 
