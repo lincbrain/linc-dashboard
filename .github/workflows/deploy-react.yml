@@ -11,9 +11,6 @@ permissions:
 
 jobs:
   build-and-deploy:
-    defaults:
-        run:
-          working-directory: react
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,18 +18,22 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
+        working-directory: ./react
         with:
           node-version: '18'
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ./react
         run: npm ci
 
       - name: Build
+        working-directory: ./react
         run: npm run build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.7.3
+        working-directory: ./react
         with:
           folder: build
           branch: gh-pages
