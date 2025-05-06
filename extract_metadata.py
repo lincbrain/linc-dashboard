@@ -17,16 +17,7 @@ def extract_assets():
 
     print(f"Processing {sum(1 for _ in dandisets)} Datasets on lincbrain.org")
 
-    df = pd.DataFrame(columns=["Dataset",
-                            "Version",
-                            "Subject", 
-                            "Modality",
-                            "Path",
-                            "Filename",
-                            "Extension",
-                            "Directory", # Top-level directory (e.g. source data, raw data, derivatives)
-                            'Size (bytes)'])
-
+    latest_assets = []
     for dataset in dandisets:
         # Exclude datasets '000048' (OpenBNB) and '000004' (Mouse LSM)
         if dataset.identifier not in ['000048', '000004']:
@@ -55,17 +46,19 @@ def extract_assets():
 
                 suffix = Path(asset.path).suffixes[0][1:] if Path(asset.path).suffixes else ''
 
-                df.loc[len(df)] = [latest_dataset.identifier,
-                                    latest_dataset.version.identifier,
-                                    subject,
-                                    modality,
-                                    asset.path, 
-                                    asset_split[-1],
-                                    suffix,
-                                    asset_split[0],
-                                    metadata_dict['contentSize']]
+                latest_assets.append({
+                    "Dataset": latest_dataset.identifier,
+                    "Version": latest_dataset.version.identifier,
+                    "Subject": subject,
+                    "Modality": modality,
+                    "Path": asset.path,
+                    "Filename": asset_split[-1],
+                    "Extension": suffix,
+                    "Directory": asset_split[0], # Top-level directory (e.g. source data, raw data, derivatives)
+                    "Size (bytes)": metadata_dict.get("contentSize", 0)
+                })
 
-    return df
+    return pd.DataFrame(latest_assets)
 
 # Summarize data across datasets
 def summarize_datasets(df):
