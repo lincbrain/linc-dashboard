@@ -23,13 +23,11 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install and build
         working-directory: ./react
-        run: npm ci
-
-      - name: Build
-        working-directory: ./react
-        run: npm run build
+        run: |
+          npm ci
+          npm run build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4.7.3
