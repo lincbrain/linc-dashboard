@@ -20,7 +20,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 theme = st_theme()
-if theme and theme['backgroundColor'] == '#000000':
+if theme and theme['backgroundColor'] == '#0e1117':
     st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bblack.alpha.png")
 else:
     st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bwhite.alpha.png")
