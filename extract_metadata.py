@@ -28,10 +28,10 @@ def extract_assets():
                             'Size (bytes)'])
 
     for dataset in dandisets:
-        latest_dataset = dataset.for_version('draft')
-
         # Exclude datasets '000048' (OpenBNB) and '000004' (Mouse LSM)
-        if latest_dataset.identifier not in ['000048', '000004']:
+        if dataset.identifier not in ['000048', '000004']:
+            latest_dataset = dataset.for_version('draft')
+
             for asset in latest_dataset.get_assets():
                 asset_split = asset.path.split('/')
 
