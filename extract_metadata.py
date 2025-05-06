@@ -15,8 +15,6 @@ def extract_assets():
     client.dandi_authenticate()
     dandisets = client.get_dandisets()
 
-    print(f"Processing {sum(1 for _ in dandisets)} Datasets on lincbrain.org")
-
     latest_assets = []
     for dataset in dandisets:
         # Exclude datasets '000048' (OpenBNB) and '000004' (Mouse LSM)
