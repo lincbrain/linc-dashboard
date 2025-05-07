@@ -1,0 +1,8 @@
+dandi
+pandas
+streamlit
+st-theme
+pillow
+plotly
+numpy
+s3fs
