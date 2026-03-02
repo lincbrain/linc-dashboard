@@ -41,7 +41,7 @@ const config = {
       navbar: {
         logo: {
           alt: 'Logo',
-          src: 'img/linc.logo.color+white.notext.png',
+          src: 'img/linc.logo.color+black.alpha.notext.png',
         },
         items: [
           {to: '/summary', label: 'Summary', position: 'right'},
