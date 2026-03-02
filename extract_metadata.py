@@ -1,3 +1,4 @@
+import os
 from dandi.dandiapi import DandiAPIClient
 import pandas as pd
 from pathlib import Path
@@ -9,9 +10,14 @@ modalities = {'oct': 'PS-OCT',
               'fluo': 'Light sheet microscopy',
               'photo': 'Blockface photo'}
 
+token = os.environ.get("DANDI_API_KEY")
+if not token:
+    raise RuntimeError("DANDI_API_KEY environment variable not set")
+
 # Create dataframe of all assets across all datasets
 def extract_assets():
-    client = DandiAPIClient("https://api.lincbrain.org/api")
+    client = DandiAPIClient(api_url="https://api.lincbrain.org/api", 
+                            token=token)
     client.dandi_authenticate()
     dandisets = client.get_dandisets()
 
