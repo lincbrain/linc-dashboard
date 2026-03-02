@@ -3,7 +3,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'LINC Dashboard',
   staticDirectories: ['static'],
-  tagline: 'Displayed is a summary of all data on lincbrain.org.  This dashboard is intended for the LINC project investigators.  Data is indexed daily.',
+  tagline: 'The LINC Dashboard is a summary of all data on lincbrain.org. It is intended for the LINC project investigators. Data is indexed daily.',
   favicon: 'img/linc.logo.color+white.notext+square.png',
 
   url: 'https://dashboard.lincbrain.org',
