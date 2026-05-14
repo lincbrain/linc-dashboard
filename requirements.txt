@@ -6,4 +6,3 @@ st-theme
 pillow
 plotly
 numpy
-s3fs
