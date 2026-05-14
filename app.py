@@ -1,7 +1,15 @@
 import streamlit as st
+from streamlit_theme import st_theme
 import importlib
+from PIL import Image
 
-st.set_page_config(layout="wide")
+im = Image.open("assets/favicon.ico")
+st.set_page_config(
+    page_title="LINC Dashboard",   
+    page_icon=im,                  
+    layout="wide", 
+    initial_sidebar_state="expanded"
+    )
 
 st.markdown("""
     <style>
@@ -11,7 +19,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bblack.alpha.png")
+theme = st_theme()
+if theme and theme['backgroundColor'] == '#0e1117':
+    st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bblack.alpha.png")
+else:
+    st.sidebar.image("https://raw.githubusercontent.com/lincbrain/linc-artwork/refs/heads/main/linc.logo.color%2Bwhite.alpha.png")
 
 if st.sidebar.button("Summary", use_container_width=True):
     st.session_state["page"] = "Summary"

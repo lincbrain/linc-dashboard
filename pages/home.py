@@ -1,9 +1,10 @@
+import os
 import pandas as pd
 import streamlit as st
 import numpy as np
 import plotly.express as px
+from utils import load_dataset
 
-@st.cache_data(ttl='1d')
 def main():
     st.title("LINC Dashboard")
     st.write("Displayed is a summary of all data on lincbrain.org.  This dashboard is intended for the LINC project investigators.  Data is indexed daily.")
@@ -11,14 +12,14 @@ def main():
     # List summary of all datasets
     st.title("Datasets")
 
-    df_datasets = pd.read_csv('lincbrain_datasets.csv')
+    df_datasets = load_dataset("lincbrain_datasets.csv")
     df_datasets_sorted = df_datasets.sort_values(by='Dataset')
 
     st.dataframe(df_datasets_sorted, hide_index=True, column_config={col: {'alignment':"left"} for col in df_datasets_sorted.columns})
 
     # Plot summary of all modalities
     st.title("Modalities")
-    df_modalities = pd.read_csv('lincbrain_modalities.csv')
+    df_modalities = load_dataset("lincbrain_modalities.csv")
     df_modalities_sorted = df_modalities.sort_values(by='Modality')
     
     subjects_unique = list(set([value.strip() for item in df_modalities_sorted['Subject'] 

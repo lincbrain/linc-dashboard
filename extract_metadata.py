@@ -1,5 +1,5 @@
+import os
 from dandi.dandiapi import DandiAPIClient
-from dandi.dandiapi import RemoteDandiset
 import pandas as pd
 from pathlib import Path
 
@@ -10,63 +10,62 @@ modalities = {'oct': 'PS-OCT',
               'fluo': 'Light sheet microscopy',
               'photo': 'Blockface photo'}
 
+token = os.environ.get("DANDI_API_KEY")
+if not token:
+    raise RuntimeError("DANDI_API_KEY environment variable not set")
+
 # Create dataframe of all assets across all datasets
 def extract_assets():
-    client = DandiAPIClient("https://api.lincbrain.org/api")
+    client = DandiAPIClient(api_url="https://api.lincbrain.org/api", 
+                            token=token)
     client.dandi_authenticate()
+    dandisets = client.get_dandisets()
 
-    print(f"Processing {sum(1 for _ in client.get_dandisets())} Datasets on lincbrain.org")
+    latest_assets = []
+    for dataset in dandisets:
+        # Exclude datasets '000048' (OpenBNB) and '000004' (Mouse LSM)
+        if dataset.identifier not in ['000048', '000004']:
+            latest_dataset = dataset.for_version('draft')
 
-    df = pd.DataFrame(columns=["Dataset",
-                            "Version",
-                            "Subject", 
-                            "Modality",
-                            "Path",
-                            "Filename",
-                            "Extension",
-                            "Directory", # Top-level directory (e.g. source data, raw data, derivatives)
-                            'Size (bytes)'])
-
-    for dataset in client.get_dandisets():
-        latest_dataset = dataset.for_version('draft')
-        if latest_dataset.identifier not in ['000048', '000004']: # Exclude OpenBNB dataset and mouse LSM dataset
             for asset in latest_dataset.get_assets():
-                print(f"Dataset: {latest_dataset}; Asset: {asset.path.split('/')[-1]:<80}", end='\r')
+                asset_split = asset.path.split('/')
+
+                print(f"Dataset: {latest_dataset}; Asset: {asset_split[-1]:<80}", end='\r')
 
                 metadata = asset.get_metadata()
                 metadata_dict = metadata.model_dump(mode='json', exclude_none=True)
 
                 subject = 'Unknown'
-                for part in asset.path.split('/'):
+                for part in asset_split:
                     if part.startswith("sub-"):
                         subject = part.split("sub-")[1].split('_')[0]
                         break
 
-                if subject == 'Unknown' and any(filename in asset.path.split('/')[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
+                if subject == 'Unknown' and any(filename in asset_split[-1].lower() for filename in ['dataset_description.json', 'participants.tsv', 'readme.md', 'samples.tsv']):
                     subject = 'n/a'
 
                 modality = next((value for key, value in modalities.items() 
-                                if key in asset.path.split('/')[-1].lower()), 
+                                if key in asset_split[-1].lower()), 
                                 'Unknown')
 
                 suffix = Path(asset.path).suffixes[0][1:] if Path(asset.path).suffixes else ''
 
-                df.loc[len(df)] = [latest_dataset.identifier,
-                                    latest_dataset.version.identifier,
-                                    subject,
-                                    modality,
-                                    asset.path, 
-                                    asset.path.split('/')[-1],
-                                    suffix,
-                                    asset.path.split('/')[0],
-                                    metadata_dict['contentSize']]
+                latest_assets.append({
+                    "Dataset": latest_dataset.identifier,
+                    "Version": latest_dataset.version.identifier,
+                    "Subject": subject,
+                    "Modality": modality,
+                    "Path": asset.path,
+                    "Filename": asset_split[-1],
+                    "Extension": suffix,
+                    "Directory": asset_split[0], # Top-level directory (e.g. source data, raw data, derivatives)
+                    "Size (bytes)": metadata_dict.get("contentSize", 0)
+                })
 
-    return df
+    return pd.DataFrame(latest_assets)
 
 # Summarize data across datasets
 def summarize_datasets(df):
-    modalities['unknown'] = 'Unknown'
-
     df_datasets = pd.DataFrame(columns=["Dataset",
                                         "Modality",
                                         "Size (GB)",
@@ -84,18 +83,19 @@ def summarize_datasets(df):
 
 # Summarize data across modalities
 def summarize_modalities(df):
-    modalities['unknown'] = 'Unknown'
+    local_modalities = modalities.copy()
+    local_modalities['unknown'] = 'Unknown'
 
     df_modalities = pd.DataFrame(columns=["Modality",
                                     "Size (GB)",
                                     "Subject", 
                                     "Extension"])
-    for _, value in modalities.items():
+    for _, value in local_modalities.items():
         df_modalities.loc[len(df_modalities)] = [value,
                     round(sum(df[(df['Modality'] == value)]['Size (bytes)'])/(1000**3),2),
                     ','.join(df[(df['Modality'] == value)]['Subject'].unique()),
                     ','.join(df[(df['Modality'] == value)]['Extension'].unique())]
-    
+
     return df_modalities
 
 if __name__ == "__main__":
