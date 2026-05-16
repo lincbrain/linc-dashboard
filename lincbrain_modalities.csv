@@ -1,6 +1,6 @@
 Modality,Size (GB),Subject,Extension
 PS-OCT,21052.7,"mouse,MF283","ome,nii"
-Dark field microscopy,3480.62,"MR256,MF162,MN115,MR243,MF275,MF278,MF191,MN083,MR252,EXC025,I58","tif,json,nii,jp2,ome,pdf"
+Dark field microscopy,3482.27,"MR256,MF162,MN115,MR243,MF275,MF278,MF191,MN083,MR252,EXC025,I58","tif,json,nii,jp2,ome,pdf"
 HiP-CT,9553.72,"I58,S45,I74","lta,nii,trk,ome,json"
 Diffusion MRI,114.95,"MR243,MR256,MF275,MF278,I58,EXC025,EXC004,S45","bvec,bval,nii,mat,bvals,bvecs,lta,trk"
 Light sheet microscopy,0.0,,
