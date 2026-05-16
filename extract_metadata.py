@@ -24,7 +24,8 @@ def extract_assets():
     latest_assets = []
     for dataset in dandisets:
         # Exclude datasets '000048' (OpenBNB) and '000004' (Mouse LSM)
-        if dataset.identifier not in ['000048', '000004']:
+        # Exclude 000053 temporarily due to large number of assets
+        if dataset.identifier not in ['000048', '000004', '000053']:
             latest_dataset = dataset.for_version('draft')
 
             for asset in latest_dataset.get_assets():
