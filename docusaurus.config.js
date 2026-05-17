@@ -3,7 +3,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'LINC Dashboard',
   staticDirectories: ['static'],
-  tagline: 'The LINC Dashboard is a summary of all data on lincbrain.org. It is intended for the LINC project investigators. Data is indexed daily.',
+  tagline: 'A summary of all LINC-related data. It is intended for the LINC project investigators. Data is indexed daily.',
   favicon: 'img/linc.logo.color+white.notext+square.png',
 
   url: 'https://dashboard.lincbrain.org',
@@ -46,9 +46,8 @@ const config = {
         items: [
           {to: '/summary', label: 'Summary', position: 'right'},
           {to: '/files', label: 'All Files', position: 'right'},
-          {to: '/bids', label: 'BIDS Compliance', position: 'right'},
-          {to: 'https://lincbrain.org', label: 'lincbrain.org', position: 'right'},
-          {to: 'https://connects.mgh.harvard.edu/', label: 'Project Homepage', position: 'right'},
+          {to: 'https://lincbrain.org', label: 'lincbrain.org ↗', position: 'right'},
+          {to: 'https://connects.mgh.harvard.edu/', label: 'Homepage ↗', position: 'right'},
         ],
       },
       footer: {
