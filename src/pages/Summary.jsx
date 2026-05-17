@@ -1,6 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
 import BrowserOnly from "@docusaurus/BrowserOnly";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 
 function SummaryTable() {
 
