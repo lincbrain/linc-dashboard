@@ -1,4 +1,3 @@
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
@@ -16,13 +15,6 @@ function HomepageHeader() {
             <span key={i}>{sentence}{i < arr.length - 1 ? '.' : ''}<br /></span>
           ))}
         </p>
-        <div className="buttons">
-          <Link
-            className="button button--secondary button--lg"
-            to="/files">
-            Explore now
-          </Link>
-        </div>
       </div>
     </header>
   );
