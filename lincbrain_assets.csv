@@ -35205,47 +35205,47 @@ Dataset,Version,Subject,Modality,Path,Filename,Extension,Directory,Size (bytes)
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Terminal_dense.ome.zarr,Terminal_dense.ome.zarr,ome,derivatives,6983
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Terminal_light.ome.zarr,Terminal_light.ome.zarr,ome,derivatives,6983
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Terminal_moderate.ome.zarr,Terminal_moderate.ome.zarr,ome,derivatives,6983
-000057,draft,MF275,Unknown,derivatives/sub-MF275/predicted_anno.ome.zarr,predicted_anno.ome.zarr,ome,derivatives,1120125
-000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275-c0_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275-c0_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,513696170
+000057,draft,MF275,Unknown,derivatives/sub-MF275/predicted_anno.ome.zarr,predicted_anno.ome.zarr,ome,derivatives,1120126
+000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,1556861263
+000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275-c1_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275-c1_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,523923347
+000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275-c2_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275-c2_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,518999196
+000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275-c0_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275-c0_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,513696172
 000057,draft,MN115,Unknown,derivatives/sub-MN115/Bundle.ome.zarr,Bundle.ome.zarr,ome,derivatives,6965
-000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,1556861262
 000057,draft,MN115,Unknown,derivatives/sub-MN115/Fiber_dense_bundle.ome.zarr,Fiber_dense_bundle.ome.zarr,ome,derivatives,54060
-000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275-c1_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275-c1_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,523923345
-000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275-c2_sample-slice0000slice0046_stain-LY_DF.ome.zarr,sub-MF275-c2_sample-slice0000slice0046_stain-LY_DF.ome.zarr,ome,derivatives,518999194
-000057,draft,MN115,Unknown,derivatives/sub-MN115/Fiber_light_bundle.ome.zarr,Fiber_light_bundle.ome.zarr,ome,derivatives,147121
-000057,draft,MN115,Unknown,derivatives/sub-MN115/Fiber_moderate_bundle.ome.zarr,Fiber_moderate_bundle.ome.zarr,ome,derivatives,103405
 000057,draft,MN115,Unknown,derivatives/sub-MN115/Injection_site.ome.zarr,Injection_site.ome.zarr,ome,derivatives,18076
-000057,draft,MN115,Unknown,derivatives/sub-MN115/Terminal_light.ome.zarr,Terminal_light.ome.zarr,ome,derivatives,43785
+000057,draft,MN115,Unknown,derivatives/sub-MN115/Fiber_moderate_bundle.ome.zarr,Fiber_moderate_bundle.ome.zarr,ome,derivatives,103405
+000057,draft,MN115,Unknown,derivatives/sub-MN115/Fiber_light_bundle.ome.zarr,Fiber_light_bundle.ome.zarr,ome,derivatives,147121
 000057,draft,MN115,Unknown,derivatives/sub-MN115/Terminal_dense.ome.zarr,Terminal_dense.ome.zarr,ome,derivatives,89153
+000057,draft,MN115,Unknown,derivatives/sub-MN115/Terminal_light.ome.zarr,Terminal_light.ome.zarr,ome,derivatives,43785
 000057,draft,MN115,Unknown,derivatives/sub-MN115/Terminal_moderate.ome.zarr,Terminal_moderate.ome.zarr,ome,derivatives,97838
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Bundle.ome.zarr,Bundle.ome.zarr,ome,derivatives,6965
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Fiber_dense_bundle.ome.zarr,Fiber_dense_bundle.ome.zarr,ome,derivatives,20968
 000057,draft,MN115,Unknown,derivatives/sub-MN115/Fibers.ome.zarr,Fibers.ome.zarr,ome,derivatives,889339
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Fiber_light_bundle.ome.zarr,Fiber_light_bundle.ome.zarr,ome,derivatives,105408
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Fiber_moderate_bundle.ome.zarr,Fiber_moderate_bundle.ome.zarr,ome,derivatives,67408
-000057,draft,MR243,Unknown,derivatives/sub-MR243/Injection_site.ome.zarr,Injection_site.ome.zarr,ome,derivatives,11094
 000057,draft,MN115,Unknown,derivatives/sub-MN115/histo.ome.zarr,histo.ome.zarr,ome,derivatives,467053423
+000057,draft,MR243,Unknown,derivatives/sub-MR243/Injection_site.ome.zarr,Injection_site.ome.zarr,ome,derivatives,11094
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Fibers.ome.zarr,Fibers.ome.zarr,ome,derivatives,50042
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Terminal_dense.ome.zarr,Terminal_dense.ome.zarr,ome,derivatives,88540
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Terminal_light.ome.zarr,Terminal_light.ome.zarr,ome,derivatives,54377
 000057,draft,MR243,Unknown,derivatives/sub-MR243/Terminal_moderate.ome.zarr,Terminal_moderate.ome.zarr,ome,derivatives,66421
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Fiber_dense_bundle.ome.zarr,Fiber_dense_bundle.ome.zarr,ome,derivatives,9655
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Bundle.ome.zarr,Bundle.ome.zarr,ome,derivatives,52447
+000057,draft,MN115,Unknown,derivatives/sub-MN115/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,1739660
+000057,draft,MR243,Unknown,derivatives/sub-MR243/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,1354314
+000057,draft,MR243,Unknown,derivatives/sub-MR243/histo.ome.zarr,histo.ome.zarr,ome,derivatives,1573052848
+000057,draft,MR252,Unknown,derivatives/sub-MR252/Injection_site.ome.zarr,Injection_site.ome.zarr,ome,derivatives,10942
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Fiber_light_bundle.ome.zarr,Fiber_light_bundle.ome.zarr,ome,derivatives,26912
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Fiber_moderate_bundle.ome.zarr,Fiber_moderate_bundle.ome.zarr,ome,derivatives,34550
 000057,draft,MR252,Unknown,derivatives/sub-MR252/Fibers.ome.zarr,Fibers.ome.zarr,ome,derivatives,18904
-000057,draft,MR252,Unknown,derivatives/sub-MR252/Injection_site.ome.zarr,Injection_site.ome.zarr,ome,derivatives,10942
-000057,draft,MR252,Unknown,derivatives/sub-MR252/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,2210488
-000057,draft,MR252,Unknown,derivatives/sub-MR252/histo.ome.zarr,histo.ome.zarr,ome,derivatives,1072618828
-000057,draft,MN115,Unknown,derivatives/sub-MN115/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,1739660
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Bundle.ome.zarr,Bundle.ome.zarr,ome,derivatives,6965
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Fiber_dense_bundle.ome.zarr,Fiber_dense_bundle.ome.zarr,ome,derivatives,13683
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Fiber_light_bundle.ome.zarr,Fiber_light_bundle.ome.zarr,ome,derivatives,42497
+000057,draft,MR252,Unknown,derivatives/sub-MR252/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,2210488
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Fiber_moderate_bundle.ome.zarr,Fiber_moderate_bundle.ome.zarr,ome,derivatives,46169
-000057,draft,MR256,Unknown,derivatives/sub-MR256/Fibers.ome.zarr,Fibers.ome.zarr,ome,derivatives,125870
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Injection_site.ome.zarr,Injection_site.ome.zarr,ome,derivatives,6965
-000057,draft,MR243,Unknown,derivatives/sub-MR243/histo.ome.zarr,histo.ome.zarr,ome,derivatives,1573052848
-000057,draft,MR243,Unknown,derivatives/sub-MR243/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,1354314
+000057,draft,MR252,Unknown,derivatives/sub-MR252/histo.ome.zarr,histo.ome.zarr,ome,derivatives,1072618828
+000057,draft,MR256,Unknown,derivatives/sub-MR256/Fibers.ome.zarr,Fibers.ome.zarr,ome,derivatives,125870
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Terminal_dense.ome.zarr,Terminal_dense.ome.zarr,ome,derivatives,14985
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Terminal_light.ome.zarr,Terminal_light.ome.zarr,ome,derivatives,18420
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Terminal_moderate.ome.zarr,Terminal_moderate.ome.zarr,ome,derivatives,31603
