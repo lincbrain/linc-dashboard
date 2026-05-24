@@ -35252,7 +35252,6 @@ Dataset,Version,Subject,Modality,Path,Filename,Extension,Directory,Size (bytes)
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Terminal_moderate.ome.zarr,Terminal_moderate.ome.zarr,ome,derivatives,31603
 000057,draft,MR256,Unknown,derivatives/sub-MR256/Outline.ome.zarr,Outline.ome.zarr,ome,derivatives,1243566
 000057,draft,MR256,Unknown,derivatives/sub-MR256/histo.ome.zarr,histo.ome.zarr,ome,derivatives,1100985829
-000057,draft,MF275,Dark field microscopy,derivatives/sub-MF275/sub-MF275_sample-slice0000slice0046_stain-LY_DF_combined.ome.zarr,sub-MF275_sample-slice0000slice0046_stain-LY_DF_combined.ome.zarr,ome,derivatives,176286
 000058,draft,MF283,PS-OCT,rawdata/sub-MF283/sub-MF283_sample-slice01_chunk-0002_OCT.nii.gz,sub-MF283_sample-slice01_chunk-0002_OCT.nii.gz,nii,rawdata,15214289133
 000058,draft,MF283,PS-OCT,rawdata/sub-MF283/sub-MF283_sample-slice01_chunk-0004_OCT.nii.gz,sub-MF283_sample-slice01_chunk-0004_OCT.nii.gz,nii,rawdata,15207169359
 000058,draft,MF283,PS-OCT,rawdata/sub-MF283/sub-MF283_sample-slice01_chunk-0005_OCT.nii.gz,sub-MF283_sample-slice01_chunk-0005_OCT.nii.gz,nii,rawdata,15201299539
