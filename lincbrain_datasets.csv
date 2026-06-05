@@ -9,4 +9,4 @@ Dataset,Modality,Size (GB),Subject,Extension
 000054,Unknown,10582.11,MF168,"tif,ome"
 000055,Unknown,3601.62,"AG9-AY5d,n/a","ome,json"
 000057,"Unknown,Dark field microscopy",8.9,"MR252,MF275,MN115,MR243,MR256",ome
-000058,"PS-OCT,Unknown",58254.15,MF283,"nii,ome"
+000058,Unknown,56.4,MF283,ome
