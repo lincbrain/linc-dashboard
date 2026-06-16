@@ -56,11 +56,9 @@ def extract_assets():
                     "Version": latest_dataset.version.identifier,
                     "Subject": subject,
                     "Modality": modality,
+                    "Size (bytes)": metadata_dict.get("contentSize", 0),
                     "Path": asset.path,
-                    "Filename": asset_split[-1],
                     "Extension": suffix,
-                    "Directory": asset_split[0], # Top-level directory (e.g. source data, raw data, derivatives)
-                    "Size (bytes)": metadata_dict.get("contentSize", 0)
                 })
 
     return pd.DataFrame(latest_assets)
@@ -104,6 +102,6 @@ if __name__ == "__main__":
     df_datasets = summarize_datasets(df)
     df_modalities = summarize_modalities(df)
 
-    df.to_csv('./lincbrain_assets.csv', index=False)
-    df_datasets.to_csv('./lincbrain_datasets.csv', index=False)
-    df_modalities.to_csv('./lincbrain_modalities.csv', index=False)
+    df.to_csv('./static/lincbrain_assets.csv', index=False)
+    df_datasets.to_csv('./static/lincbrain_datasets.csv', index=False)
+    df_modalities.to_csv('./static/lincbrain_modalities.csv', index=False)
