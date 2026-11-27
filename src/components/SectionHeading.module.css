@@ -1,0 +1,45 @@
+.heading {
+  /* Clear the fixed navbar and the card's padding */
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 2rem);
+}
+
+.link {
+  display: inline-flex;
+  margin-left: 0.35rem;
+  padding: 0.2rem;
+  border-radius: 4px;
+  vertical-align: middle;
+  color: var(--ifm-color-emphasis-600);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+/* On hover, focus, after copying, and always on touch screens */
+.heading:hover .link,
+.link:focus-visible,
+.link.shown {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .link {
+    opacity: 1;
+  }
+}
+
+.link:hover {
+  color: var(--ifm-color-primary);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 0;
+}
+
+.status {
+  margin-left: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: normal;
+  vertical-align: middle;
+  color: var(--ifm-color-emphasis-700);
+}

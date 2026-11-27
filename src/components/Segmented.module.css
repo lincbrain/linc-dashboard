@@ -1,0 +1,48 @@
+.segmented {
+  display: inline-flex;
+  height: 2.25rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: var(--ifm-background-color);
+}
+
+.small {
+  height: 1.9rem;
+}
+
+.option {
+  padding: 0 0.8rem;
+  border: 0;
+  border-left: 1px solid var(--ifm-color-emphasis-300);
+  background: none;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.small .option {
+  padding: 0 0.65rem;
+  font-size: 0.8125rem;
+}
+
+.option:first-child {
+  border-left: 0;
+}
+
+.option:hover:not(.selected) {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
+}
+
+.selected {
+  background-color: var(--dashboard-accent);
+  color: #fff;
+  font-weight: 600;
+}

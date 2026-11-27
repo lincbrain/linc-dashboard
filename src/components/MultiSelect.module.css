@@ -1,0 +1,143 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 0 1 18rem;
+  min-width: 12rem;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background-color: var(--ifm-background-color);
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--ifm-font-color-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 1px;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--ifm-font-color-base);
+}
+
+.caret {
+  flex: none;
+  margin-left: auto;
+  /* Aligned with the other dropdowns' arrows */
+  margin-right: 0.05rem;
+  color: var(--dashboard-chevron-color);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 10rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--ifm-color-emphasis-100);
+  font-size: 0.8125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chipText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.popover {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  min-width: 100%;
+  margin-top: 4px;
+  padding: 0.35rem 0;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background-color: var(--ifm-background-surface-color);
+  box-shadow: 0 4px 16px var(--dashboard-shadow);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.option:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.option input {
+  margin: 0;
+  accent-color: var(--ifm-color-primary);
+}
+
+.optionLabel {
+  flex: 1;
+}
+
+.detail {
+  margin-left: 1rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.reset {
+  display: block;
+  width: calc(100% - 1.5rem);
+  margin: 0.3rem 0.75rem 0.1rem;
+  padding: 0.3rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  background: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--ifm-color-primary);
+  text-align: left;
+  cursor: pointer;
+}

@@ -1,0 +1,271 @@
+.wrapper {
+  width: 100%;
+  margin-bottom: 2rem;
+  /* Clear of the fixed navbar */
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 1rem);
+}
+
+.scroller {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.table tbody tr:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.table th,
+.table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table tbody tr + tr td {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.table thead th {
+  background-color: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.table .alignRight {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.alignRight .header {
+  flex-direction: row-reverse;
+}
+
+.sortButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.alignRight .sortButton {
+  flex-direction: row-reverse;
+}
+
+.sortButton:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.sortIndicator {
+  font-size: 0.7rem;
+  color: var(--ifm-color-primary);
+}
+
+.sortIndicatorIdle {
+  color: var(--ifm-color-emphasis-500);
+}
+
+/* Also when stacked */
+.empty {
+  text-align: center !important;
+  padding: 2rem !important;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--ifm-color-emphasis-500);
+}
+
+.list {
+  display: inline-block;
+  min-width: min(9.5rem, 60vw);
+  overflow-wrap: break-word;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem 1.5rem;
+  padding-top: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.pageSize {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pageSize select,
+.pageButtons button {
+  font: inherit;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 4px;
+  background-color: var(--ifm-background-color);
+  color: inherit;
+}
+
+.pageButtons {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pageButtons button {
+  min-width: 2rem;
+  cursor: pointer;
+}
+
+.pageButtons button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.pageNumber {
+  padding: 0 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.range {
+  font-variant-numeric: tabular-nums;
+}
+
+.pageSize select {
+  appearance: none;
+  padding-right: 1.6rem;
+  background-image: var(--dashboard-chevron);
+  background-repeat: no-repeat;
+  background-position: right 0.45rem center;
+  background-size: 0.7rem;
+  cursor: pointer;
+}
+
+/* Stacked rows; scrolling would clip tooltips */
+.stacked .scroller {
+  overflow: visible;
+}
+
+.stacked .table,
+.stacked .table thead,
+.stacked .table tbody,
+.stacked .table tbody tr,
+.stacked .table tbody td {
+  display: block;
+}
+
+.stacked .table thead tr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  padding: 0.5rem 0.75rem;
+  background-color: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 7px 7px 0 0;
+}
+
+.stacked .table thead tr::before {
+  content: "Sort by";
+  font-weight: normal;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.stacked .table thead th {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.stacked .alignRight .header,
+.stacked .alignRight .sortButton {
+  flex-direction: row;
+}
+
+.stacked .table tbody tr {
+  padding: 0.6rem 0.75rem;
+}
+
+.stacked .table tbody tr:last-child {
+  border-radius: 0 0 7px 7px;
+}
+
+.stacked .table tbody tr + tr {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.stacked .table tbody td {
+  padding: 0;
+  border: 0;
+  text-align: left;
+  white-space: normal;
+}
+
+.stacked .table tbody td:first-child {
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+}
+
+.stacked .table tbody td:not(:first-child) {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+.stacked .table tbody td:not(:first-child)::before {
+  content: attr(data-label);
+  flex: none;
+  width: 5.5rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.stacked .table tbody td.stackHeading {
+  display: block;
+  margin: 0 0 0.35rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.stacked .table tbody td.stackHeading::before {
+  content: none;
+}
+
+.stacked .cellValue {
+  flex: 1;
+  min-width: 0;
+}
+
+.stacked .list {
+  min-width: 0;
+}
+
+.stacked .table td.empty {
+  font-weight: normal;
+}

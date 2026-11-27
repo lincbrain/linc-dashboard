@@ -1,0 +1,17 @@
+Archive,Dataset,Name,Modality,Size (GB),Subject,Samples,Extension,First uploaded,Last uploaded
+LINC,000003,,"Blockface photo,Unknown,Dark-field microscopy,Diffusion MRI",3670.77,"MR256,n/a,MF162,MN115,MR243,MF275,MF278,MF191,MN083,MR252",177,"tif,json,tsv,nii.gz,jp2,ASC,bvec,bval,JPG,OME-Zarr,zarr,white,pial,yml,png,timg,log,,trk,mat",,
+LINC,000005,,"Unknown,Diffusion MRI,Dark-field microscopy,HiP-CT",11426.41,"n/a,I58,EXC025,EXC004,S45,I74,I35",10,"json,nii.gz,bvals,bvecs,trk,lta,tiff,mat,fib.gz,trk.gz,pdf,png,zarr,scene,nii,OME-Zarr,tsv",,
+LINC,000006,,Unknown,0.14,"n/a,JL1",0,"tsv,json,nii.gz",,
+LINC,000010,,Unknown,454.56,"Unknown,macaque,human,n/a",0,"tiff,dat,sifx,ini,mat,bin,OME-Zarr,json,png,jpg,avi,gif",,
+LINC,000049,,"Unknown,HiP-CT",29.51,"n/a,I74",3,"tsv,tif,json,OME-Zarr",,
+LINC,000051,,Unknown,0.53,"test1,n/a,test",0,"dat,json,mat,zip",,
+LINC,000052,,"Unknown,PS-OCT,Light-sheet microscopy",9555.85,"Unknown,mouse",12,"mat,nii,OME-Zarr,nii.gz,zarr",,
+LINC,000054,,Unknown,10582.11,MF168,8,"tif,OME-Zarr",,
+LINC,000055,,Unknown,3601.62,"AG9-AY5d,n/a",12,"OME-Zarr,json",,
+LINC,000057,,"Unknown,Dark-field microscopy",8.9,"MR252,MF275,MN115,MR243,MR256",1,OME-Zarr,,
+LINC,000058,,Unknown,56.4,MF283,1,OME-Zarr,,
+DANDI,001278,NIH BRAIN CONNECTS - LINC UM1 - Human Data,"Unknown,Dark-field microscopy,Diffusion MRI,HiP-CT",6897.29,"n/a,Ha1,Hb1,Hb2",3,",json,nii.gz,bval,bvec,gii,txt,trk,zarr,OME-Zarr v0.5",2026-02-26,2026-11-09
+DANDI,001372,NIH BRAIN CONNECTS - LINC UM1 - Macaque Data,"Unknown,Diffusion MRI,Dark-field microscopy,Blockface photo",68.31,"n/a,M1,M2,M3,M4,Unknown",0,",txt,json,nii.gz,bvals,bvecs,btable,bval,bvec,tsv",2026-03-03,2026-11-24
+DANDI,001412,NIH BRAIN CONNECTS - LINC UM1 - Macaque + Mouse Data - Scratch,"Unknown,PS-OCT,Light-sheet microscopy,HiP-CT",1926737.68,"n/a,Unknown,MF282,MF283,MF284,AG9AY5E,AG9AY5F,MN131,mouse2025,mouse2026,testscan,HRSCAPEBeads,test-before-m2",517,",md,json,tiff,OME-Zarr v0.4,OME-Zarr,nii.gz,yaml,OME-Zarr v0.5,OME-Zarr v0.6,tsv,mat",2026-03-24,2026-11-25
+DANDI,001769,NIH BRAIN CONNECTS - LINC UM1 - Human Data - Scratch,"Unknown,Diffusion MRI,Dark-field microscopy,PS-OCT",101249.26,"n/a,Unknown,Ha1,Hb1,I65,MF284,misctissue,I80,human10um",41,",json,OME-Zarr v0.4,zarr,mat,nii.gz,bvecs,trk,yaml,OME-Zarr v0.5,txt,prd,csv,nii,OME-Zarr v0.6",2026-03-24,2026-11-19
+DANDI,002048,NIH BRAIN CONNECTS - LINC UM1 - Pilot Data,"Unknown,Light-sheet microscopy",0.12,"n/a,PH1,PM1",0,",json,nii.gz",2026-11-04,2026-11-04

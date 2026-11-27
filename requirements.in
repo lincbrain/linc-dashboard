@@ -1,0 +1,6 @@
+# The extraction's direct dependencies. requirements.txt pins them, and what
+# they depend on, to exact versions and checksums; to update it, run:
+#   uv pip compile requirements.in --universal --python-version 3.11 --generate-hashes -o requirements.txt
+bidsschematools~=2.0
+pandas
+requests

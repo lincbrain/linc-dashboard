@@ -1,0 +1,137 @@
+.card {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.1rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.legend {
+  margin-bottom: 0.4rem;
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.plot {
+  position: relative;
+  width: 100%;
+}
+
+.scroll {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Lets the tooltip extend past a scrolling chart */
+.frame {
+  position: relative;
+}
+
+.plot svg,
+.scroll svg {
+  display: block;
+  overflow: visible;
+}
+
+.plot text,
+.scroll text {
+  font-family: var(--ifm-font-family-base);
+}
+
+.hit {
+  cursor: pointer;
+  outline: none;
+}
+
+.hit:focus-visible .focusRing {
+  stroke: var(--ifm-font-color-base);
+  stroke-width: 2;
+}
+
+.note {
+  margin: 0.4rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 10;
+  min-width: 11rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background-color: var(--ifm-background-surface-color);
+  box-shadow: 0 3px 12px var(--dashboard-shadow);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.tooltipTitle {
+  margin-bottom: 0.2rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tooltipRow strong {
+  min-width: 3.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tooltipTotal {
+  margin-top: 0.2rem;
+  padding-top: 0.2rem;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.key {
+  flex: none;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.hint {
+  color: var(--ifm-color-emphasis-700);
+}

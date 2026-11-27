@@ -1,0 +1,194 @@
+/* Infima variables and the dashboard's colors; dark mode below */
+:root {
+  --ifm-color-primary: rgb(120, 88, 188);
+
+  --dashboard-accent: rgb(120, 88, 188);
+  --dashboard-accent-hover: rgb(94, 64, 160);
+  --dashboard-empty-cell: #ececf1;
+  /* Infima's is transparent in light mode */
+  --dashboard-page-background: #fff;
+  --dashboard-shadow: rgba(0, 0, 0, 0.12);
+  --dashboard-note-background: #fdf8e6;
+  --dashboard-note-border: #f0dfa8;
+  --dashboard-note-text: #5b4500;
+  --dashboard-footer-border: #e3e5e8;
+  --dashboard-badge-background: #fdf3d7;
+  --dashboard-badge-text: #6b4e00;
+  --dashboard-chevron-color: #606770;
+  --dashboard-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.25 6 7.75l3.5-3.5' fill='none' stroke='%23606770' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  /* Modality colors, validated for color-vision deficiencies */
+  --modality-1: #257de0;
+  --modality-2: #f47230;
+  --modality-3: #00b894;
+  --modality-4: #f2a600;
+  --modality-5: #ee7fac;
+  --modality-6: #008a17;
+  --modality-unknown: #b9bac2;
+  --modality-other: #8d9098;
+}
+
+[data-theme='dark'] {
+  /* Legible on the dark background */
+  --ifm-color-primary: rgb(177, 156, 240);
+
+  --dashboard-accent-hover: rgb(150, 122, 222);
+  --dashboard-empty-cell: #2c2d33;
+  --dashboard-page-background: var(--ifm-background-color);
+  --dashboard-shadow: rgba(0, 0, 0, 0.5);
+  --dashboard-note-background: #2b2618;
+  --dashboard-note-border: #5c4d22;
+  --dashboard-note-text: #f1dc9e;
+  --dashboard-footer-border: #2e2f33;
+  --dashboard-badge-background: #3a3116;
+  --dashboard-badge-text: #f1dc9e;
+  --dashboard-chevron-color: #a9adb4;
+  --dashboard-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.25 6 7.75l3.5-3.5' fill='none' stroke='%23a9adb4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  --modality-1: #338ced;
+  --modality-2: #e76624;
+  --modality-3: #00a888;
+  --modality-4: #d28e05;
+  --modality-5: #e24d8b;
+  --modality-6: #0aac23;
+  --modality-unknown: #6b6e76;
+}
+
+/* Tables are styled by their components */
+table {
+  display: table;
+  margin: 0;
+  overflow: visible;
+}
+
+table thead,
+table tr,
+table tr:nth-child(2n),
+table th {
+  background-color: transparent;
+}
+
+table thead tr,
+table tr,
+table th,
+table td {
+  border: 0;
+}
+
+table th,
+table td {
+  padding: 0;
+}
+
+.navbar {
+  background-color: rgb(114, 78, 182);
+}
+
+.navbar__title,
+.navbar__link,
+.navbar__item {
+  color: rgb(255, 255, 255);
+}
+
+/* Current page: underlined */
+.navbar__link:hover,
+.navbar__link--active {
+  color: rgb(255, 255, 255);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.4rem;
+}
+
+.navbar__link:hover:not(.navbar__link--active) {
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Purple, for the white logo */
+.navbar-sidebar__brand {
+  background-color: rgb(114, 78, 182);
+}
+
+.navbar .clean-btn {
+  color: rgb(255, 255, 255);
+}
+
+.heroBanner {
+  padding: 2rem 0 1rem;
+}
+
+.heroContent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
+}
+
+.heroTitle {
+  font-size: 2.25rem;
+  margin: 0;
+}
+
+/* Sized like the Overview's title */
+main article > header > h1 {
+  font-size: 2.25rem;
+}
+
+.heroSubtitle {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ifm-color-emphasis-700);
+}
+
+@media screen and (max-width: 600px) {
+  .heroBanner {
+    padding-top: 1.5rem;
+  }
+
+  .heroTitle,
+  main article > header > h1 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Aligned with the navbar */
+.footer {
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--dashboard-footer-border);
+  background-color: var(--ifm-background-color);
+}
+
+.footer > .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  max-width: none;
+  padding: 0 var(--ifm-navbar-padding-horizontal);
+}
+
+.footer__links,
+.footer__bottom {
+  margin: 0;
+}
+
+.footer__bottom {
+  order: -1;
+}
+
+.footer__link-item,
+.footer__copyright {
+  font-size: 0.875rem;
+  white-space: nowrap;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* Wider than Infima's; this selector also outranks its wide-screen and fluid widths */
+.container:not(.footer .container) {
+  max-width: 95vw;
+}

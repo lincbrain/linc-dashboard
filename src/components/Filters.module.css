@@ -1,0 +1,99 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 0 1 12rem;
+  min-width: 8rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.rows {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+}
+
+.search {
+  flex: 1 1 16rem;
+  min-width: auto;
+  max-width: 28rem;
+}
+
+.filter:has(> [role="group"]) {
+  flex: none;
+}
+
+.month {
+  flex-basis: 8rem;
+}
+
+.search input,
+.filter select {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background-color: var(--ifm-background-color);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: normal;
+  color: var(--ifm-font-color-base);
+}
+
+.search input:focus-visible,
+.filter select:focus-visible,
+.clear:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 1px;
+}
+
+.clear {
+  height: 2.25rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background-color: var(--ifm-background-color);
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+}
+
+.clear:hover {
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.filter select {
+  appearance: none;
+  padding-right: 2rem;
+  background-image: var(--dashboard-chevron);
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 0.75rem;
+  cursor: pointer;
+}
+
+.stale {
+  opacity: 0.6;
+  transition: opacity 0.15s ease 0.1s;
+}

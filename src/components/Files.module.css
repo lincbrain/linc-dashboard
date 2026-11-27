@@ -1,0 +1,44 @@
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.path {
+  overflow-wrap: anywhere;
+  min-width: 16rem;
+}
+
+.note {
+  display: block;
+  width: fit-content;
+  margin-top: 0.25rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 4px;
+  background-color: var(--dashboard-badge-background);
+  color: var(--dashboard-badge-text);
+  font-size: 0.75rem;
+}
+
+.bids {
+  min-width: 9rem;
+}
+
+.invalid {
+  font-weight: 600;
+}
+
+.bidsIssue {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.muted {
+  color: var(--ifm-color-emphasis-600);
+}

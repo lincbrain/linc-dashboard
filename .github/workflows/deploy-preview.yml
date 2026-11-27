@@ -1,0 +1,38 @@
+name: Deploy preview
+
+on:
+  push:
+    branches-ignore:
+      - gh-pages
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    name: Build and deploy preview
+    if: github.repository_owner != 'lincbrain'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build website
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+          BASE_URL: /${{ github.event.repository.name }}/
+        run: npm run build
+      - name: Deploy to the gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
+        with:
+          folder: build
+          branch: gh-pages
+          commit-message: Deploy preview of ${{ github.repository }}@${{ github.sha }} (${{ github.ref_name }})
