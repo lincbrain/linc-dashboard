@@ -135,14 +135,15 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
     );
   }
   if (containerWidth > 0 && lanes.length > 0 && months.length > 0) {
-    // The months from the opening one fill the visible width, and earlier ones extend to the left
-    const visibleWidth = Math.max(MIN_WIDTH - LABEL_WIDTH, containerWidth) - LEFT - RIGHT;
+    // The months from the opening one fill the visible width, and earlier ones extend to the left. With
+    // earlier months, the opening one starts right at the left edge, where earlier bars are cut off.
+    const visibleWidth = Math.max(MIN_WIDTH - LABEL_WIDTH, containerWidth) - (opening > 0 ? 0 : LEFT) - RIGHT;
     const start = dayValue(`${months[0]}-01`);
     const openingStart = dayValue(`${months[opening]}-01`);
     const end = monthEndValue(months[months.length - 1]);
     const x = (ms) => LEFT + ((ms - start) / (end - openingStart)) * visibleWidth;
     const width = x(end) + RIGHT;
-    scrollTo = x(openingStart) - LEFT;
+    scrollTo = opening > 0 ? x(openingStart) : 0;
     const quarterly = months.length - opening > 8;
 
     const positions = new Map();

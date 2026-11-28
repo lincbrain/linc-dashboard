@@ -292,6 +292,8 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
             {shown.length === 0 ? <div className={styles.empty}>No dated files match these filters.</div> : chart}
           </div>
         </div>
+        {/* Hides earlier months in the room kept for the first month's labels, so that the plot starts at its month */}
+        {chart && <div className={styles.edge} style={{ left: AXIS_WIDTH, width: MARGIN.left, height: HEIGHT - MARGIN.bottom + 1 }} />}
         {tooltip}
       </div>
 

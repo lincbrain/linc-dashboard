@@ -64,6 +64,12 @@
   min-width: 0;
 }
 
+.edge {
+  position: absolute;
+  top: 0;
+  background-color: var(--dashboard-page-background);
+}
+
 .pinned svg,
 .plot svg,
 .scroll svg {
