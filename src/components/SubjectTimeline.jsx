@@ -141,9 +141,12 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
     const start = dayValue(`${months[0]}-01`);
     const openingStart = dayValue(`${months[opening]}-01`);
     const end = monthEndValue(months[months.length - 1]);
-    const x = (ms) => LEFT + ((ms - start) / (end - openingStart)) * visibleWidth;
-    const width = x(end) + RIGHT;
-    scrollTo = opening > 0 ? x(openingStart) : 0;
+    const scale = visibleWidth / (end - openingStart);
+    // A whole number of pixels, which the browser scrolls to exactly, so that the opening month is right at the edge
+    scrollTo = opening > 0 ? Math.round(LEFT + (openingStart - start) * scale) : 0;
+    const x = (ms) => (opening > 0 ? scrollTo : LEFT) + (ms - openingStart) * scale;
+    // The measured width is rounded down, so a pixel more keeps the browser from stopping a pixel short of scrollTo
+    const width = x(end) + RIGHT + (opening > 0 ? 1 : 0);
     const quarterly = months.length - opening > 8;
 
     const positions = new Map();

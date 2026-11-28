@@ -100,10 +100,12 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
     const visibleWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
     const count = months.length;
     const spacing = count > 1 ? visibleWidth / Math.max(1, count - 1 - opening) : visibleWidth;
-    const x = (i) => MARGIN.left + (count > 1 ? i * spacing : visibleWidth / 2);
+    // A whole number of pixels, which the browser scrolls to exactly, so that the opening month is right at the edge
+    scrollTo = Math.round(opening * spacing);
+    const x = (i) => MARGIN.left + (count > 1 ? scrollTo + (i - opening) * spacing : visibleWidth / 2);
     const plotRight = count > 1 ? x(count - 1) : MARGIN.left + visibleWidth;
-    const plotWidth = plotRight + MARGIN.right;
-    scrollTo = opening * spacing;
+    // The measured width is rounded down, so a pixel more keeps the browser from stopping a pixel short of scrollTo
+    const plotWidth = plotRight + MARGIN.right + (opening > 0 ? 1 : 0);
     const labelEvery = spacing >= 30 ? 1 : spacing >= 12 ? 3 : 6;
 
     const marker = count === 1 ? 0 : active;
