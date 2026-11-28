@@ -17,6 +17,8 @@ const LANE_MIN_HEIGHT = 28;
 const LANE_GAP = 8;
 const MIN_WIDTH = 640;
 const MIN_BAR_WIDTH = 8;
+// The "only before 2023" marker and label
+const EARLIER_WIDTH = 92;
 const DAY = 24 * 60 * 60 * 1000;
 
 // A subject's series: the letters its label starts with, e.g. "mf" for MF282 and MF284
@@ -42,9 +44,7 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
   const history = useHistory();
   const { withBaseUrl } = useBaseUrlUtils();
 
-  // Bars that end before the first month are left out, and so are subjects with no other bars
-  const firstDay = months.length > 0 ? `${months[0]}-01` : "";
-  const { lanes, earlierSubjects } = useMemo(() => {
+  const lanes = useMemo(() => {
     const bySubject = new Map();
     for (const file of files) {
       const date = file[basis];
@@ -65,27 +65,20 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
       item.datasets.add(file.DatasetId);
       byModality.set(file.Modality, item);
     }
-    let earlierSubjects = 0;
-    const lanes = [];
-    for (const [subject, byModality] of bySubject) {
+    const lanes = [...bySubject].map(([subject, byModality]) => {
       const items = [...byModality]
         .map(([modality, item]) => ({ subject, modality, ...item }))
-        .filter((item) => item.last >= firstDay)
         .sort((a, b) => compareModalities(a.modality, b.modality));
-      if (items.length === 0) {
-        earlierSubjects += 1;
-        continue;
-      }
       const datasets = [...new Set(items.flatMap((item) => [...item.datasets]))].sort(compareLabels);
       const first = items.reduce((min, item) => (item.first < min ? item.first : min), items[0].first);
-      lanes.push({ subject, series: seriesOf(subject), items, datasets, first });
-    }
+      return { subject, series: seriesOf(subject), items, datasets, first };
+    });
     const seriesFirst = new Map();
     for (const { series, first } of lanes) {
       if (!seriesFirst.has(series) || first < seriesFirst.get(series)) seriesFirst.set(series, first);
     }
     // Featured subjects first; then each series by its first date, and its subjects by theirs
-    lanes.sort((a, b) =>
+    return lanes.sort((a, b) =>
       compareSubjects(a.subject, b.subject, () =>
         seriesFirst.get(a.series).localeCompare(seriesFirst.get(b.series)) ||
         compareLabels(a.series, b.series) ||
@@ -93,8 +86,7 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
         compareLabels(a.subject, b.subject),
       ),
     );
-    return { lanes, earlierSubjects };
-  }, [files, basis, firstDay]);
+  }, [files, basis]);
 
   const legendNames = [...new Set(lanes.flatMap((lane) => lane.items.map((item) => item.modality)))].sort(compareModalities);
   const verb = basis.toLowerCase();
@@ -114,6 +106,7 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
     const laneHeight = (lane) => Math.max(lane.items.length * ROW_HEIGHT, LANE_MIN_HEIGHT) + LANE_GAP;
     const height = AXIS_HEIGHT + lanes.reduce((sum, lane) => sum + laneHeight(lane), 0);
     const quarterly = months.length > 8;
+    const earlierLabel = `only before ${months[0].endsWith("-01") ? months[0].slice(0, 4) : longMonth(months[0])}`;
 
     let laneTop = AXIS_HEIGHT;
     const positions = new Map();
@@ -130,11 +123,13 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
           </text>
           {lane.items.map((item, k) => {
             const cy = top + k * ROW_HEIGHT + 6;
-            // Bars that start before the first month are cut off at it, with a square end
-            const isCut = dayValue(item.first) < start;
-            const x1 = x(Math.max(dayValue(item.first), start));
-            const x2 = x(dayValue(item.last) + DAY);
-            const isDot = x2 - x1 < MIN_BAR_WIDTH;
+            // Rows that end before the first month get a label at the left edge, and bars that start
+            // before it are cut off there, with a square end
+            const isEarlier = dayValue(item.last) < start;
+            const isCut = !isEarlier && dayValue(item.first) < start;
+            const x1 = isEarlier ? x(start) : x(Math.max(dayValue(item.first), start));
+            const x2 = isEarlier ? x1 + EARLIER_WIDTH : x(dayValue(item.last) + DAY);
+            const isDot = !isEarlier && x2 - x1 < MIN_BAR_WIDTH;
             const key = `${item.subject}|${item.modality}`;
             const center = (x1 + x2) / 2;
             positions.set(key, { start: isDot ? center : x1, end: isDot ? center : x2, top: cy, item });
@@ -167,7 +162,14 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
                   rx="4"
                   fill="transparent"
                 />
-                {isDot ? (
+                {isEarlier ? (
+                  <>
+                    <path d={`M${x1 + 1},${cy}L${x1 + 7},${cy - 4}L${x1 + 7},${cy + 4}Z`} fill={modalityColor(item.modality)} />
+                    <text x={x1 + 11} y={cy + 3.5} fontSize="10" fill="var(--ifm-color-emphasis-700)">
+                      {earlierLabel}
+                    </text>
+                  </>
+                ) : isDot ? (
                   <circle cx={center} cy={cy} r="4.5" fill={modalityColor(item.modality)} stroke="var(--ifm-background-color)" strokeWidth="2" />
                 ) : (
                   <>
@@ -258,24 +260,10 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
       {lanes.length > 0 && <ModalityLegend names={legendNames} className={styles.legend} />}
       <div className={styles.frame}>
         <div className={styles.scroll} ref={scrollRef} onPointerLeave={() => setActive(null)}>
-          {lanes.length === 0 ? (
-            <div className={styles.empty}>
-              {earlierSubjects > 0
-                ? `No subjects have data ${verb} from ${longMonth(months[0])} on.`
-                : "No dated files with a subject match these filters."}
-            </div>
-          ) : (
-            plot
-          )}
+          {lanes.length === 0 ? <div className={styles.empty}>No dated files with a subject match these filters.</div> : plot}
         </div>
         {tooltip}
       </div>
-      {earlierSubjects > 0 && months.length > 0 && (
-        <p className={styles.note}>
-          {countOf(earlierSubjects, "subject")} with data {verb} only before {longMonth(months[0])}{" "}
-          {earlierSubjects === 1 ? "isn't" : "aren't"} shown.
-        </p>
-      )}
     </ChartCard>
   );
 });
