@@ -17,6 +17,9 @@ const RIGHT = 16;
 const AXIS_HEIGHT = 24;
 const ROW_HEIGHT = 12;
 const LANE_MIN_HEIGHT = 28;
+// A subject's datasets are all listed under it, two to a line
+const DATASETS_PER_LINE = 2;
+const DATASET_LINE_HEIGHT = 12;
 const LANE_GAP = 8;
 const MIN_WIDTH = 640;
 const MIN_BAR_WIDTH = 8;
@@ -27,8 +30,18 @@ function seriesOf(subject) {
   return (subject.match(/^[A-Za-z]+/)?.[0] ?? subject).toLowerCase();
 }
 
+function datasetLines(datasets) {
+  const lines = [];
+  for (let i = 0; i < datasets.length; i += DATASETS_PER_LINE) {
+    const last = i + DATASETS_PER_LINE >= datasets.length;
+    lines.push(datasets.slice(i, i + DATASETS_PER_LINE).join(", ") + (last ? "" : ","));
+  }
+  return lines;
+}
+
 function laneHeight(lane) {
-  return Math.max(lane.items.length * ROW_HEIGHT, LANE_MIN_HEIGHT) + LANE_GAP;
+  const labelHeight = LANE_MIN_HEIGHT + Math.max(lane.datasetLines.length - 1, 0) * DATASET_LINE_HEIGHT;
+  return Math.max(lane.items.length * ROW_HEIGHT, labelHeight) + LANE_GAP;
 }
 
 // When each subject's data was produced (or uploaded), by modality. It opens at TIME_CHART_START, and
@@ -78,7 +91,7 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
         .sort((a, b) => compareModalities(a.modality, b.modality));
       const datasets = [...new Set(items.flatMap((item) => [...item.datasets]))].sort(compareLabels);
       const first = items.reduce((min, item) => (item.first < min ? item.first : min), items[0].first);
-      return { subject, series: seriesOf(subject), items, datasets, first };
+      return { subject, series: seriesOf(subject), items, datasetLines: datasetLines(datasets), first };
     });
     const seriesFirst = new Map();
     for (const { series, first } of lanes) {
@@ -126,7 +139,11 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
               {lane.subject}
             </text>
             <text x="0" y={tops[j] + 23} fontSize="10" fill="var(--ifm-color-emphasis-600)">
-              {lane.datasets.length > 2 ? `${lane.datasets.slice(0, 2).join(", ")} +${lane.datasets.length - 2}` : lane.datasets.join(", ")}
+              {lane.datasetLines.map((line, i) => (
+                <tspan key={i} x="0" dy={i > 0 ? DATASET_LINE_HEIGHT : 0}>
+                  {line}
+                </tspan>
+              ))}
             </text>
             <line x1="0" x2={LABEL_WIDTH} y1={separator(j)} y2={separator(j)} stroke="var(--ifm-color-emphasis-200)" />
           </g>
