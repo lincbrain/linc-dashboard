@@ -299,12 +299,6 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
         {tooltip}
       </div>
 
-      {chart && opening > 0 && (
-        <p className={styles.note}>
-          Scroll back to see data {verb} before {longMonth(months[opening])}.
-        </p>
-      )}
-
       {undated > 0 && (
         <p className={styles.note}>
           {countOf(undated, "file has", "files have")} no {verb} date yet and {undated === 1 ? "isn't" : "aren't"} shown.
