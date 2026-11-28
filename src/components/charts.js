@@ -17,6 +17,9 @@ export function longMonth(month) {
   });
 }
 
+// The time charts start here, even when earlier data exists
+export const TIME_CHART_START = "2023-01";
+
 export function monthRange(first, last) {
   const months = [];
   let [year, month] = first.split("-").map(Number);

@@ -32,8 +32,11 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
   const plotRef = useRef(null);
   const width = useElementWidth(plotRef);
 
-  const { byMonth, undated } = useMemo(() => {
+  // Files dated before the first month start the running totals
+  const { byMonth, before, earlier, undated } = useMemo(() => {
     const result = new Map(months.map((month) => [month, new Map()]));
+    const before = new Map();
+    let earlier = 0;
     let missing = 0;
     for (const file of files) {
       const date = file[basis];
@@ -41,25 +44,30 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
         missing += 1;
         continue;
       }
-      const row = result.get(date.slice(0, 7));
+      const month = date.slice(0, 7);
+      const isEarlier = months.length > 0 && month < months[0];
+      const row = isEarlier ? before : result.get(month);
       if (!row) continue;
+      if (isEarlier) earlier += 1;
       const cell = row.get(file.Modality) ?? { files: 0, bytes: 0 };
       cell.files += 1;
       cell.bytes += file.size;
       row.set(file.Modality, cell);
     }
-    return { byMonth: result, undated: missing };
+    return { byMonth: result, before, earlier, undated: missing };
   }, [files, basis, months]);
 
   const { value, format, tick } = METRICS[metric];
-  const shown = modalities.filter((modality) => months.some((month) => byMonth.get(month).has(modality)));
+  const shown = modalities.filter(
+    (modality) => before.has(modality) || months.some((month) => byMonth.get(month).has(modality)),
+  );
   const valueOf = (month, modality) => {
     const cell = byMonth.get(month).get(modality);
     return cell ? value(cell) : 0;
   };
   const running = Object.fromEntries(
     shown.map((modality) => {
-      let sum = 0;
+      let sum = before.has(modality) ? value(before.get(modality)) : 0;
       return [modality, months.map((month) => (sum += valueOf(month, modality)))];
     }),
   );
@@ -265,6 +273,12 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
         {tooltip}
       </div>
 
+      {earlier > 0 && months.length > 0 && (
+        <p className={styles.note}>
+          {countOf(earlier, "file")} {verb} before {longMonth(months[0])} {earlier === 1 ? "is" : "are"} included in the
+          running totals from that month.
+        </p>
+      )}
       {undated > 0 && (
         <p className={styles.note}>
           {countOf(undated, "file has", "files have")} no {verb} date yet and {undated === 1 ? "isn't" : "aren't"} shown.
