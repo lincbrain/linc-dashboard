@@ -21,7 +21,11 @@ const config = {
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   presets: [
     [
@@ -31,6 +35,7 @@ const config = {
           customCss: './src/css/custom.css',
         },
         docs: false,
+        blog: false,
         // Production only
         gtag: isProduction
           ? {
