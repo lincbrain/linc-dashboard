@@ -7,6 +7,8 @@ import { archiveOf, compareLabels, datasetId, toNumber } from "./data";
 export const OVERVIEW_FILTERS = {
   Modality: { param: "modality", multi: true },
   Archive: { param: "archive" },
+  Person: { param: "person" },
+  Role: { param: "role" }, // "" (any role) or one of ROLES
   Dates: { param: "dates" }, // "" (produced) or "uploaded"
   From: { param: "from" },
   To: { param: "to" },
@@ -24,6 +26,58 @@ export function compareSubjects(a, b, fallback = compareLabels) {
 }
 
 export const NOT_SUBJECTS = new Set(["n/a", "Unknown"]);
+
+// Columns of the assets CSV, from curation/people.csv: each lists its people, separated by "; "
+export const ROLES = ["Staining", "Generation", "Annotation", "Analysis"];
+export const PEOPLE_DESCRIPTION =
+  "The people who stained the tissue, generated (acquired) the data, annotated it and analyzed it.";
+
+// A missing value that can be chosen, e.g. the Person filter's "No one listed"
+export const NONE = "(none)";
+
+// Shared by the files with no people, most of them
+const NO_PEOPLE = Object.freeze({});
+const NO_ONE = Object.freeze([]);
+
+// e.g. { Staining: ["A", "B"], Analysis: ["C"] }
+export function peopleByRole(row) {
+  let people = NO_PEOPLE;
+  for (const role of ROLES) {
+    if (!row[role]) continue;
+    if (people === NO_PEOPLE) people = {};
+    people[role] = row[role].split("; ");
+  }
+  return people;
+}
+
+// A file's (or dataset's) people in the role, or in any role
+export function peopleOf(item, role) {
+  if (role) return item.People[role] ?? NO_ONE;
+  if (item.People === NO_PEOPLE) return NO_ONE;
+  return [...new Set(ROLES.flatMap((each) => item.People[each] ?? NO_ONE))];
+}
+
+export function hasPeople(files) {
+  return files.some((file) => file.People !== NO_PEOPLE);
+}
+
+// Whether the Person is listed in the Role (or any role); with no person, whether anyone is
+export function matchesPeople(file, { Person: person, Role: role }) {
+  if (!person && !role) return true;
+  const people = peopleOf(file, role);
+  if (person === NONE) return people.length === 0;
+  return person ? people.includes(person) : people.length > 0;
+}
+
+// Adds the file's size to each Person option (within the Role) and each Role option (for the Person)
+export function addPeopleSizes(file, filters, personSizes, roleSizes) {
+  const people = peopleOf(file, filters.Role);
+  if (people.length === 0) addTo(personSizes, NONE, file.size);
+  for (const person of people) addTo(personSizes, person, file.size);
+  for (const role of ROLES) {
+    if (matchesPeople(file, { Person: filters.Person, Role: role })) addTo(roleSizes, role, file.size);
+  }
+}
 
 // Sample labels are only unique within a subject
 export function sampleKey(file) {
@@ -66,6 +120,7 @@ function prepareFiles(rows) {
         Produced: row.Produced || "",
         Uploaded: row.Uploaded || "",
         BIDS: row.BIDS || "",
+        People: peopleByRole(row),
       })),
     );
   }
@@ -76,21 +131,25 @@ export function addTo(map, key, value) {
   map.set(key, (map.get(key) ?? 0) + value);
 }
 
-// The files within the filters, and each Modality and Archive option's size within the other filters
+// The files within the filters, and each Modality, Archive, Person and Role option's size within the other filters
 function filterFiles(files, filters, basis) {
   const modalities = new Set(filters.Modality);
   const filtered = [];
   const modalitySizes = new Map();
   const archiveSizes = new Map();
+  const personSizes = new Map();
+  const roleSizes = new Map();
   for (const file of files) {
     if (!inMonthRange(file, filters, basis)) continue;
     const inModality = !modalities.size || modalities.has(file.Modality);
     const inArchive = !filters.Archive || file.Archive === filters.Archive;
-    if (inArchive) addTo(modalitySizes, file.Modality, file.size);
-    if (inModality) addTo(archiveSizes, file.Archive, file.size);
-    if (inModality && inArchive) filtered.push(file);
+    const inPeople = matchesPeople(file, filters);
+    if (inArchive && inPeople) addTo(modalitySizes, file.Modality, file.size);
+    if (inModality && inPeople) addTo(archiveSizes, file.Archive, file.size);
+    if (inModality && inArchive) addPeopleSizes(file, filters, personSizes, roleSizes);
+    if (inModality && inArchive && inPeople) filtered.push(file);
   }
-  return { filtered, modalitySizes, archiveSizes };
+  return { filtered, modalitySizes, archiveSizes, personSizes, roleSizes };
 }
 
 // Each modality's subjects
@@ -106,7 +165,7 @@ export function useOverview(rows) {
   const deferred = useDeferredValue(filters);
   const files = prepareFiles(rows);
   const basis = basisOf(deferred);
-  const { filtered, modalitySizes, archiveSizes } = useMemo(
+  const { filtered, modalitySizes, archiveSizes, personSizes, roleSizes } = useMemo(
     () => filterFiles(files, deferred, basis),
     [files, deferred, basis],
   );
@@ -114,6 +173,7 @@ export function useOverview(rows) {
     () => [...new Set([...MODALITIES.map((m) => m.name), ...files.map((file) => file.Modality)])].sort(compareModalities),
     [files],
   );
+  const showPeople = useMemo(() => hasPeople(files), [files]);
   const scope = useMemo(
     () => (deferred.Modality.length ? [...deferred.Modality].sort(compareModalities) : modalities),
     [deferred.Modality, modalities],
@@ -130,5 +190,8 @@ export function useOverview(rows) {
     scope,
     modalitySizes,
     archiveSizes,
+    personSizes,
+    roleSizes,
+    showPeople,
   };
 }

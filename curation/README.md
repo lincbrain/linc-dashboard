@@ -3,7 +3,8 @@
 `extract_metadata.py` works out each file's modality, subject and tissue
 sample from its name (BIDS entities and suffixes). When a name does not give
 the modality or subject, they are "Unknown". These files map such files to
-curated values, and merge samples whose label is spelled several ways.
+curated values, merge samples whose label is spelled several ways, and list
+the people who worked on the files, which file names do not give.
 
 ## `mappings.csv` (edited by hand)
 
@@ -57,6 +58,36 @@ Labels are only unique within a subject. One row per label to rename:
 For example, `sub-Hb1_sample-lefthemi_...` and `sub-Hb1_sample-LeftHemi_...`
 are the same sample, so `lefthemi` is listed with `Same as` `LeftHemi`, and the
 dashboard counts and filters them as one.
+
+## `people.csv` (edited by hand)
+
+Who stained the tissue, generated (acquired) the data, annotated it and
+analyzed it. The dashboard can be filtered by person and role, and lists each
+file's and dataset's people. One row per person and role:
+
+| Column | Meaning |
+| --- | --- |
+| `Archive` | `LINC` (lincbrain.org) or `DANDI` (dandiarchive.org) |
+| `Dataset` | Dataset identifier, e.g. `000003` |
+| `Folder` | Folder within the dataset; the row applies to every file under it. Empty for the whole dataset. |
+| `Subject` | Only the files of this subject, e.g. `MR256`. Optional. |
+| `Sample` | Only the files of this sample (as shown on the dashboard, after `samples.csv`), e.g. `slice079`. Optional. |
+| `Modality` | Only the files of this modality, e.g. `PS-OCT`. Optional. |
+| `Stain` | Only the files with this BIDS `stain-` label, e.g. `LY`. Optional. |
+| `Role` | `Staining`, `Generation`, `Annotation` or `Analysis` |
+| `Person` | The person's name, as it should appear on the dashboard |
+
+A row applies to the files that match all of its non-empty columns. For
+example, `LINC,000003,,MR256,,,LY,Staining,Jane Doe` lists Jane Doe for the
+staining of subject MR256's LY-stained files in LINC:000003, and
+`DANDI,001412,derivatives/registration,,,,,Analysis,John Roe` lists John Roe
+for the analysis of every file under that folder.
+
+Rows add up: a file lists everyone whose rows match it, in the order of the
+rows. Spell each name the same way in every row: the dashboard filters by the
+exact name. `extract_metadata.py` warns about rows with an unknown role or
+modality, and rows that match no files. It writes a column for each role to
+`lincbrain_assets.csv`, with the people separated by `; `.
 
 ## `unmapped.csv` (generated)
 

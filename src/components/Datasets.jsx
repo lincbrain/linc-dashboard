@@ -3,6 +3,7 @@ import Link from "@docusaurus/Link";
 import DataTable, { List, Missing } from "./DataTable";
 import LoadingState from "./LoadingState";
 import OverviewFilters from "./OverviewFilters";
+import { PeopleList } from "./People";
 import { compareModalities } from "./modalities";
 import {
   useCsv,
@@ -11,12 +12,13 @@ import {
   datasetId,
   datasetSortKey,
   datasetUrl,
+  compareLabels,
   ASSETS_CSV,
   DATASETS_CSV,
   INVALID_BIDS,
   UPLOAD_RANGE_DESCRIPTION,
 } from "./data";
-import { filesLink, sampleKey, useOverview } from "./overview";
+import { PEOPLE_DESCRIPTION, ROLES, filesLink, peopleOf, sampleKey, useOverview } from "./overview";
 import styles from "./Datasets.module.css";
 import filterStyles from "./Filters.module.css";
 
@@ -88,6 +90,18 @@ const DATASET_COLUMNS = [
   },
 ];
 
+// Shown once people are listed
+const PEOPLE_COLUMN = {
+  key: "People",
+  label: "People",
+  description: PEOPLE_DESCRIPTION,
+  sortValue: (row) => peopleOf(row).join(", "),
+  render: (row) => <PeopleList people={row.People} />,
+};
+const DATASET_COLUMNS_WITH_PEOPLE = DATASET_COLUMNS.flatMap((column) =>
+  column.key === "Samples" ? [column, PEOPLE_COLUMN] : [column],
+);
+
 function summarizeDatasets(files, names) {
   const groups = new Map();
   for (const file of files) {
@@ -102,6 +116,7 @@ function summarizeDatasets(files, names) {
         subjects: new Set(),
         samples: new Set(),
         extensions: new Set(),
+        people: Object.fromEntries(ROLES.map((role) => [role, new Set()])),
         first: "",
         last: "",
       };
@@ -113,6 +128,7 @@ function summarizeDatasets(files, names) {
     group.subjects.add(file.Subject);
     if (file.Sample) group.samples.add(sampleKey(file));
     if (file.Extension) group.extensions.add(file.Extension);
+    for (const role of ROLES) for (const person of peopleOf(file, role)) group.people[role].add(person);
     if (file.Uploaded) {
       if (!group.first || file.Uploaded < group.first) group.first = file.Uploaded;
       if (file.Uploaded > group.last) group.last = file.Uploaded;
@@ -127,6 +143,7 @@ function summarizeDatasets(files, names) {
     Subject: [...group.subjects],
     Samples: group.samples.size,
     Extension: [...group.extensions],
+    People: Object.fromEntries(ROLES.map((role) => [role, [...group.people[role]].sort(compareLabels)])),
     "First uploaded": group.first,
     "Last uploaded": group.last,
     "Invalid BIDS": group.invalidBids,
@@ -135,7 +152,7 @@ function summarizeDatasets(files, names) {
 
 function DatasetTable({ rows, names }) {
   const overview = useOverview(rows);
-  const { deferred, isStale, filtered } = overview;
+  const { deferred, isStale, filtered, showPeople } = overview;
   // Keep the filters, so that the link shows the files counted
   const datasetRows = useMemo(
     () =>
@@ -151,7 +168,7 @@ function DatasetTable({ rows, names }) {
       <OverviewFilters {...overview} />
       <div className={isStale ? filterStyles.stale : undefined}>
         <DataTable
-          columns={DATASET_COLUMNS}
+          columns={showPeople ? DATASET_COLUMNS_WITH_PEOPLE : DATASET_COLUMNS}
           rows={datasetRows}
           rowKey={datasetId}
           initialSort={INITIAL_SORT}

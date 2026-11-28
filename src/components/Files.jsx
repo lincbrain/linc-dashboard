@@ -3,6 +3,7 @@ import Link from "@docusaurus/Link";
 import DataTable from "./DataTable";
 import LoadingState from "./LoadingState";
 import MultiSelect from "./MultiSelect";
+import { PeopleFilters, PeopleList } from "./People";
 import { DateFilters } from "./OverviewFilters";
 import useUrlFilters, { emptyFilters, hasFilters } from "./useUrlFilters";
 import { compareModalities, modalityColor } from "./modalities";
@@ -28,11 +29,22 @@ import {
   INVALID_BIDS,
   VALID_BIDS,
 } from "./data";
-import { OVERVIEW_FILTERS, addTo, basisOf, inMonthRange } from "./overview";
+import {
+  NONE,
+  OVERVIEW_FILTERS,
+  PEOPLE_DESCRIPTION,
+  addPeopleSizes,
+  addTo,
+  basisOf,
+  hasPeople,
+  inMonthRange,
+  matchesPeople,
+  peopleByRole,
+  peopleOf,
+} from "./overview";
 import styles from "./Files.module.css";
 import filterStyles from "./Filters.module.css";
 
-const NONE = "(none)";
 // Matches any value but NONE, e.g. any note
 const ANY = "(any)";
 
@@ -42,7 +54,7 @@ function splitId(id) {
   return { Archive, Dataset };
 }
 
-// Dropdowns; Modality and Archive are shared with the Overview and Datasets pages
+// Dropdowns; Modality and Archive (and Person and Role, see People.jsx) are shared with the Overview and Datasets pages
 const FILTERS = [
   { key: "Modality", multi: true, allLabel: "All modalities", compare: compareModalities, color: modalityColor },
   {
@@ -156,6 +168,22 @@ const COLUMNS = [
   },
 ];
 
+// Shown once people are listed
+const COLUMNS_WITH_PEOPLE = COLUMNS.flatMap((column) =>
+  column.key === "Modality"
+    ? [
+        column,
+        {
+          key: "People",
+          label: "People",
+          description: PEOPLE_DESCRIPTION,
+          sortValue: (row) => peopleOf(row).join(", "),
+          render: (row) => <PeopleList people={row.People} />,
+        },
+      ]
+    : [column],
+);
+
 const preparedFiles = new WeakMap();
 
 // Missing values become NONE, so that they can be chosen
@@ -169,7 +197,10 @@ function prepareFiles(rows) {
           if (!file[key]) file[key] = NONE;
           if (split) file[`${key}List`] = file[key] === NONE ? [NONE] : file[key].split(split);
         }
-        file.searchText = [file.DatasetId, file.Subject, file.Modality, file.Path, file.Extension].join(" ").toLowerCase();
+        file.People = peopleByRole(row);
+        file.searchText = [file.DatasetId, file.Subject, file.Modality, file.Path, file.Extension, ...peopleOf(file)]
+          .join(" ")
+          .toLowerCase();
         return file;
       }),
     );
@@ -203,13 +234,20 @@ function filterFiles(files, filters, query) {
   let totalSize = 0;
   const sizes = Object.fromEntries(FILTERS.map(({ key }) => [key, new Map()]));
   const anySizes = Object.fromEntries(FILTERS.map(({ key }) => [key, 0]));
+  const personSizes = new Map();
+  const roleSizes = new Map();
   for (const file of files) {
     if ((query && !file.searchText.includes(query)) || !inMonthRange(file, filters, basis)) continue;
     const failed = FILTERS.filter((filter) => !matches(file, filter, filters[filter.key]));
+    const inPeople = matchesPeople(file, filters);
     if (failed.length === 0) {
-      filtered.push(file);
-      totalSize += file.size;
+      addPeopleSizes(file, filters, personSizes, roleSizes);
+      if (inPeople) {
+        filtered.push(file);
+        totalSize += file.size;
+      }
     }
+    if (!inPeople) continue;
     // A file counts for a dropdown if it fails no other filter, or only one the dropdown ignores
     for (const filter of FILTERS) {
       if (!failed.every((other) => other === filter || filter.optionsIgnore?.includes(other.key))) continue;
@@ -225,7 +263,7 @@ function filterFiles(files, filters, query) {
       return [key, anyLabel && anySizes[key] > 0 ? [[ANY, anySizes[key]], ...values] : values];
     }),
   );
-  return { filtered, totalSize, options };
+  return { filtered, totalSize, options, personSizes, roleSizes };
 }
 
 function FilesTable({ rows, csvUrl }) {
@@ -234,11 +272,12 @@ function FilesTable({ rows, csvUrl }) {
   const deferredFilters = useDeferredValue(filters);
   const deferredQuery = deferredFilters.Query.trim().toLowerCase();
   const files = prepareFiles(rows);
-  const { filtered, totalSize, options } = useMemo(
+  const { filtered, totalSize, options, personSizes, roleSizes } = useMemo(
     () => filterFiles(files, deferredFilters, deferredQuery),
     [files, deferredFilters, deferredQuery],
   );
   const isFiltered = hasFilters(FILTER_SCHEMA, filters);
+  const showPeople = useMemo(() => hasPeople(files), [files]);
 
   function changeFilters(changes) {
     const next = { ...filters, ...changes };
@@ -293,6 +332,13 @@ function FilesTable({ rows, csvUrl }) {
         <div className={filterStyles.row}>
           {SHARED_FILTERS.map(renderDropdown)}
           <DateFilters files={files} filters={filters} onChange={changeFilters} />
+          <PeopleFilters
+            show={showPeople}
+            filters={filters}
+            personSizes={personSizes}
+            roleSizes={roleSizes}
+            onChange={changeFilters}
+          />
           {isFiltered && (
             <button type="button" className={filterStyles.clear} onClick={() => setFilters(emptyFilters(FILTER_SCHEMA))}>
               Clear filters
@@ -305,7 +351,7 @@ function FilesTable({ rows, csvUrl }) {
             <input
               type="search"
               value={filters.Query}
-              placeholder="Path, dataset, subject, modality…"
+              placeholder={showPeople ? "Path, dataset, subject, modality, person…" : "Path, dataset, subject, modality…"}
               onChange={(event) => changeFilters({ Query: event.target.value })}
             />
           </label>
@@ -324,7 +370,7 @@ function FilesTable({ rows, csvUrl }) {
       </div>
 
       <div className={deferredFilters !== filters ? filterStyles.stale : undefined}>
-        <DataTable columns={COLUMNS} rows={filtered} paginate emptyMessage="No files match these filters." />
+        <DataTable columns={showPeople ? COLUMNS_WITH_PEOPLE : COLUMNS} rows={filtered} paginate emptyMessage="No files match these filters." />
       </div>
     </>
   );

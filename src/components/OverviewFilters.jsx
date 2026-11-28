@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import MultiSelect from "./MultiSelect";
 import Segmented from "./Segmented";
+import { PeopleFilters } from "./People";
 import { emptyFilters, hasFilters } from "./useUrlFilters";
 import { modalityColor } from "./modalities";
 import { ARCHIVES, formatBytes } from "./data";
@@ -52,7 +53,17 @@ export function DateFilters({ files, filters, onChange }) {
   );
 }
 
-export default function OverviewFilters({ files, filters, setFilters, modalities, modalitySizes, archiveSizes }) {
+export default function OverviewFilters({
+  files,
+  filters,
+  setFilters,
+  modalities,
+  modalitySizes,
+  archiveSizes,
+  personSizes,
+  roleSizes,
+  showPeople,
+}) {
   const update = (changes) => setFilters({ ...filters, ...changes });
 
   return (
@@ -80,6 +91,13 @@ export default function OverviewFilters({ files, filters, setFilters, modalities
         </select>
       </label>
       <DateFilters files={files} filters={filters} onChange={update} />
+      <PeopleFilters
+        show={showPeople}
+        filters={filters}
+        personSizes={personSizes}
+        roleSizes={roleSizes}
+        onChange={update}
+      />
       {hasFilters(OVERVIEW_FILTERS, filters) && (
         <button type="button" className={styles.clear} onClick={() => setFilters(emptyFilters(OVERVIEW_FILTERS))}>
           Clear filters

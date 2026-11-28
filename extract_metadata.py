@@ -35,6 +35,7 @@ NOT_APPLICABLE = 'n/a'
 MAPPINGS_CSV = './curation/mappings.csv'
 UNMAPPED_CSV = './curation/unmapped.csv'
 SAMPLES_CSV = './curation/samples.csv'
+PEOPLE_CSV = './curation/people.csv'
 UNMAPPED_FOLDER_DEPTH = 3
 
 # Keyed by dataset identifier prefix, e.g. LINC:000003
@@ -68,6 +69,11 @@ MISSING_DERIVATIVES_DESCRIPTION = 'Missing derivatives description: add dataset_
 # Note for source data whose subject is not given by its folder
 NOT_IN_SUBJECT_FOLDER = 'Not in a subject folder: move to sourcedata/sub-<label>/'
 NOTE_SEPARATOR = '; '
+
+# Who stained the tissue, generated (acquired) the data, annotated it and analyzed it: a column each
+ROLES = ('Staining', 'Generation', 'Annotation', 'Analysis')
+# Columns of curation/people.csv that, when not empty, narrow the files a row applies to
+PEOPLE_MATCH_FIELDS = ('Subject', 'Sample', 'Modality', 'Stain')
 
 # GitHub rejects files over 100 MB
 MAX_CSV_BYTES = 95_000_000
@@ -649,6 +655,48 @@ def apply_sample_names(df, names):
     return df.assign(Sample=[rename(*key) for key in zip(df['Archive'], df['Dataset'], df['Subject'], df['Sample'])])
 
 
+def load_people(path=PEOPLE_CSV):
+    """Curated people, each with a role for the files a row matches."""
+    rows = read_strings(path)
+    if rows is None:
+        return []
+    known = set(modalities.values())
+    people = []
+    for row in rows.to_dict('records'):
+        row['Folder'] = row.get('Folder', '').strip('/')
+        row['Person'] = row['Person'].strip()
+        if row['Role'] not in ROLES:
+            warn(f"{path}: unknown role {row['Role']!r} for {row['Person']} (not one of {', '.join(ROLES)})")
+            continue
+        if row.get('Modality') and row['Modality'] not in known:
+            warn(f"{path}: unknown modality {row['Modality']!r} for {row['Person']}")
+        if row['Person']:
+            people.append(row)
+    return people
+
+
+def apply_people(df, people):
+    """Add a column for each role, with the people of the rows that match each file."""
+    names = {role: {} for role in ROLES}  # {role: {row index: [person]}}
+    for row in people:
+        match = (df['Archive'] == row['Archive']) & (df['Dataset'] == row['Dataset'])
+        if row['Folder']:
+            match &= df['Path'].str.startswith(row['Folder'] + '/')
+        for field in PEOPLE_MATCH_FIELDS:
+            if row.get(field):
+                match &= df[field] == row[field]
+        indices = match.to_numpy().nonzero()[0]
+        if not len(indices):
+            warn(f"{PEOPLE_CSV}: no files match the {row['Role']} row for {row['Person']} "
+                 f"in {row['Archive']}:{row['Dataset']}")
+        for index in indices:
+            listed = names[row['Role']].setdefault(index, [])
+            if row['Person'] not in listed:
+                listed.append(row['Person'])
+    return df.assign(**{role: [NOTE_SEPARATOR.join(by_index.get(index, ())) for index in range(len(df))]
+                        for role, by_index in names.items()})
+
+
 def summarize_unmapped(df, depth=UNMAPPED_FOLDER_DEPTH):
     """Folders with files of unknown modality or subject."""
     unknown = df[(df['Modality'] == UNKNOWN) | (df['Subject'] == UNKNOWN)]
@@ -691,4 +739,5 @@ if __name__ == "__main__":
 
     df = apply_mappings(pd.concat(assets, ignore_index=True), load_mappings())
     df = apply_sample_names(df, load_sample_names())
+    df = apply_people(df, load_people())
     write_csvs(df, pd.concat(names, ignore_index=True))
