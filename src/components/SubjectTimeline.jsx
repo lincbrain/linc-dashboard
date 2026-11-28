@@ -4,12 +4,15 @@ import { useBaseUrlUtils } from "@docusaurus/useBaseUrl";
 import ChartCard from "./ChartCard";
 import { ModalityLegend, compareModalities, modalityColor } from "./modalities";
 import { compareLabels, countOf } from "./data";
-import { dayValue, longMonth, monthEndValue, shortMonth, useElementWidth } from "./charts";
+import { dayValue, longMonth, monthEndValue, openingIndex, shortMonth, useElementWidth, useScrollLeft } from "./charts";
 import { keepInside } from "./popover";
 import { NOT_SUBJECTS, compareSubjects, filesLink } from "./overview";
 import styles from "./Charts.module.css";
 
-const LABEL_WIDTH = 170;
+// The subject labels stay put while the bars scroll
+const LABEL_WIDTH = 162;
+// Room before the first month and after the last
+const LEFT = 8;
 const RIGHT = 16;
 const AXIS_HEIGHT = 24;
 const ROW_HEIGHT = 12;
@@ -17,8 +20,6 @@ const LANE_MIN_HEIGHT = 28;
 const LANE_GAP = 8;
 const MIN_WIDTH = 640;
 const MIN_BAR_WIDTH = 8;
-// The "only before 2023" marker and label
-const EARLIER_WIDTH = 92;
 const DAY = 24 * 60 * 60 * 1000;
 
 // A subject's series: the letters its label starts with, e.g. "mf" for MF282 and MF284
@@ -26,9 +27,15 @@ function seriesOf(subject) {
   return (subject.match(/^[A-Za-z]+/)?.[0] ?? subject).toLowerCase();
 }
 
-// When each subject's data was produced (or uploaded), by modality
+function laneHeight(lane) {
+  return Math.max(lane.items.length * ROW_HEIGHT, LANE_MIN_HEIGHT) + LANE_GAP;
+}
+
+// When each subject's data was produced (or uploaded), by modality. It opens at TIME_CHART_START, and
+// earlier months are a scroll away.
 export default memo(function SubjectTimeline({ files, basis, months, linkFilters = {} }) {
   const scrollRef = useRef(null);
+  // The bars' visible width
   const containerWidth = useElementWidth(scrollRef);
   const [active, setActive] = useState(null);
   const tooltipRef = useRef(null);
@@ -95,41 +102,59 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
     history.push(withBaseUrl(filesLink(linkFilters, { Modality: [item.modality] }, { subject: item.subject })));
   }
 
+  const opening = openingIndex(months);
+  const tops = [];
+  let height = AXIS_HEIGHT;
+  for (const lane of lanes) {
+    tops.push(height);
+    height += laneHeight(lane);
+  }
+  const separator = (j) => tops[j] + laneHeight(lanes[j]) - LANE_GAP / 2;
+
+  // Rendered before the bars are measured, so that their width stays the same
+  let labels = null;
   let plot = null;
   // Outside the scrolling frame, which would clip it
   let tooltip = null;
+  let scrollTo = 0;
+  if (lanes.length > 0) {
+    labels = (
+      <svg width={LABEL_WIDTH} height={height} aria-hidden="true">
+        {lanes.map((lane, j) => (
+          <g key={lane.subject}>
+            <text x="0" y={tops[j] + 10} fontSize="12" fill="var(--ifm-font-color-base)">
+              {lane.subject}
+            </text>
+            <text x="0" y={tops[j] + 23} fontSize="10" fill="var(--ifm-color-emphasis-600)">
+              {lane.datasets.length > 2 ? `${lane.datasets.slice(0, 2).join(", ")} +${lane.datasets.length - 2}` : lane.datasets.join(", ")}
+            </text>
+            <line x1="0" x2={LABEL_WIDTH} y1={separator(j)} y2={separator(j)} stroke="var(--ifm-color-emphasis-200)" />
+          </g>
+        ))}
+      </svg>
+    );
+  }
   if (containerWidth > 0 && lanes.length > 0 && months.length > 0) {
-    const width = Math.max(MIN_WIDTH, containerWidth);
+    // The months from the opening one fill the visible width, and earlier ones extend to the left
+    const visibleWidth = Math.max(MIN_WIDTH - LABEL_WIDTH, containerWidth) - LEFT - RIGHT;
     const start = dayValue(`${months[0]}-01`);
+    const openingStart = dayValue(`${months[opening]}-01`);
     const end = monthEndValue(months[months.length - 1]);
-    const x = (ms) => LABEL_WIDTH + ((ms - start) / (end - start)) * (width - LABEL_WIDTH - RIGHT);
-    const laneHeight = (lane) => Math.max(lane.items.length * ROW_HEIGHT, LANE_MIN_HEIGHT) + LANE_GAP;
-    const height = AXIS_HEIGHT + lanes.reduce((sum, lane) => sum + laneHeight(lane), 0);
-    const quarterly = months.length > 8;
-    const earlierLabel = `only before ${months[0].endsWith("-01") ? months[0].slice(0, 4) : longMonth(months[0])}`;
+    const x = (ms) => LEFT + ((ms - start) / (end - openingStart)) * visibleWidth;
+    const width = x(end) + RIGHT;
+    scrollTo = x(openingStart) - LEFT;
+    const quarterly = months.length - opening > 8;
 
-    let laneTop = AXIS_HEIGHT;
     const positions = new Map();
-    const laneElements = lanes.map((lane) => {
-      const top = laneTop;
-      laneTop += laneHeight(lane);
+    const laneElements = lanes.map((lane, j) => {
+      const top = tops[j];
       return (
         <g key={lane.subject}>
-          <text x="0" y={top + 10} fontSize="12" fill="var(--ifm-font-color-base)">
-            {lane.subject}
-          </text>
-          <text x="0" y={top + 23} fontSize="10" fill="var(--ifm-color-emphasis-600)">
-            {lane.datasets.length > 2 ? `${lane.datasets.slice(0, 2).join(", ")} +${lane.datasets.length - 2}` : lane.datasets.join(", ")}
-          </text>
           {lane.items.map((item, k) => {
             const cy = top + k * ROW_HEIGHT + 6;
-            // Rows that end before the first month get a label at the left edge, and bars that start
-            // before it are cut off there, with a square end
-            const isEarlier = dayValue(item.last) < start;
-            const isCut = !isEarlier && dayValue(item.first) < start;
-            const x1 = isEarlier ? x(start) : x(Math.max(dayValue(item.first), start));
-            const x2 = isEarlier ? x1 + EARLIER_WIDTH : x(dayValue(item.last) + DAY);
-            const isDot = !isEarlier && x2 - x1 < MIN_BAR_WIDTH;
+            const x1 = x(dayValue(item.first));
+            const x2 = x(dayValue(item.last) + DAY);
+            const isDot = x2 - x1 < MIN_BAR_WIDTH;
             const key = `${item.subject}|${item.modality}`;
             const center = (x1 + x2) / 2;
             positions.set(key, { start: isDot ? center : x1, end: isDot ? center : x2, top: cy, item });
@@ -162,25 +187,15 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
                   rx="4"
                   fill="transparent"
                 />
-                {isEarlier ? (
-                  <>
-                    <path d={`M${x1 + 1},${cy}L${x1 + 7},${cy - 4}L${x1 + 7},${cy + 4}Z`} fill={modalityColor(item.modality)} />
-                    <text x={x1 + 11} y={cy + 3.5} fontSize="10" fill="var(--ifm-color-emphasis-700)">
-                      {earlierLabel}
-                    </text>
-                  </>
-                ) : isDot ? (
+                {isDot ? (
                   <circle cx={center} cy={cy} r="4.5" fill={modalityColor(item.modality)} stroke="var(--ifm-background-color)" strokeWidth="2" />
                 ) : (
-                  <>
-                    <rect x={x1} y={cy - 4} width={x2 - x1} height="8" rx="4" fill={modalityColor(item.modality)} />
-                    {isCut && <rect x={x1} y={cy - 4} width="4" height="8" fill={modalityColor(item.modality)} />}
-                  </>
+                  <rect x={x1} y={cy - 4} width={x2 - x1} height="8" rx="4" fill={modalityColor(item.modality)} />
                 )}
               </g>
             );
           })}
-          <line x1="0" x2={width} y1={laneTop - LANE_GAP / 2} y2={laneTop - LANE_GAP / 2} stroke="var(--ifm-color-emphasis-200)" />
+          <line x1="0" x2={width} y1={separator(j)} y2={separator(j)} stroke="var(--ifm-color-emphasis-200)" />
         </g>
       );
     });
@@ -218,10 +233,11 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
     );
     if (active && positions.has(active)) {
       const { start, end, top, item } = positions.get(active);
+      // Within the chart, beside the labels and the bars' visible part
       const frame = scrollRef.current;
-      const visible = frame?.clientWidth ?? width;
-      const barStart = start - (frame?.scrollLeft ?? 0);
-      const barEnd = end - (frame?.scrollLeft ?? 0);
+      const visible = LABEL_WIDTH + (frame?.clientWidth ?? width);
+      const barStart = LABEL_WIDTH + start - (frame?.scrollLeft ?? 0);
+      const barEnd = LABEL_WIDTH + end - (frame?.scrollLeft ?? 0);
       // Beside the bar, and above it in the chart's lower half
       const onRight = barEnd < visible - 240;
       const below = top < height / 2;
@@ -252,6 +268,9 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
     }
   }
 
+  // Open at TIME_CHART_START, and go back there whenever its position changes
+  useScrollLeft(scrollRef, scrollTo);
+
   return (
     <ChartCard
       id="subject-timeline"
@@ -259,11 +278,19 @@ export default memo(function SubjectTimeline({ files, basis, months, linkFilters
       description={`When each subject's data was ${verb}, by modality. Select a bar to see its files.`}>
       {lanes.length > 0 && <ModalityLegend names={legendNames} className={styles.legend} />}
       <div className={styles.frame}>
-        <div className={styles.scroll} ref={scrollRef} onPointerLeave={() => setActive(null)}>
-          {lanes.length === 0 ? <div className={styles.empty}>No dated files with a subject match these filters.</div> : plot}
+        <div className={styles.pinned}>
+          {labels}
+          <div
+            className={styles.scroll}
+            ref={scrollRef}
+            onPointerLeave={() => setActive(null)}
+            onScroll={() => setActive(null)}>
+            {lanes.length === 0 ? <div className={styles.empty}>No dated files with a subject match these filters.</div> : plot}
+          </div>
         </div>
         {tooltip}
       </div>
+      {plot && opening > 0 && <p className={styles.note}>Scroll back to see data {verb} before {longMonth(months[opening])}.</p>}
     </ChartCard>
   );
 });

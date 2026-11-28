@@ -6,24 +6,24 @@ import ActivityChart from "./ActivityChart";
 import SubjectTimeline from "./SubjectTimeline";
 import OverviewFilters from "./OverviewFilters";
 import { useScrollToHash } from "./SectionHeading";
-import { TIME_CHART_START, monthRange } from "./charts";
+import { monthRange } from "./charts";
 import { ASSETS_CSV, useCsv, formatBytes, formatNumber } from "./data";
 import { NOT_SUBJECTS, sampleKey, subjectsByModality, useOverview } from "./overview";
 import styles from "./Summary.module.css";
 import filterStyles from "./Filters.module.css";
 
-// The time charts' months: from TIME_CHART_START, or a later From month, to the last dated file or the To month
 function monthsOf(files, basis, from, to) {
+  let first = from;
   let last = to;
-  if (!last) {
+  if (!first || !last) {
     for (const file of files) {
       const month = file[basis].slice(0, 7);
-      if (month && (!last || month > last)) last = month;
+      if (!month) continue;
+      if (!from && (!first || month < first)) first = month;
+      if (!to && (!last || month > last)) last = month;
     }
   }
-  if (!last) return [];
-  const start = from > TIME_CHART_START ? from : TIME_CHART_START;
-  return monthRange(start, last < start ? start : last);
+  return first && last && first <= last ? monthRange(first, last) : [];
 }
 
 function summarize(files, basis) {

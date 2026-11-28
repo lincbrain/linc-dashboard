@@ -53,12 +53,26 @@
   position: relative;
 }
 
+/* An axis or labels that stay put beside a scrolling chart */
+.pinned {
+  display: flex;
+  align-items: flex-start;
+}
+
+.pinned > .scroll {
+  flex: 1;
+  min-width: 0;
+}
+
+.pinned svg,
 .plot svg,
 .scroll svg {
   display: block;
+  flex: none;
   overflow: visible;
 }
 
+.pinned text,
 .plot text,
 .scroll text {
   font-family: var(--ifm-font-family-base);

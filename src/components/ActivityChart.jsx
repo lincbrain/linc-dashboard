@@ -3,11 +3,13 @@ import ChartCard from "./ChartCard";
 import Segmented from "./Segmented";
 import { ModalityLegend, modalityColor } from "./modalities";
 import { countOf, formatBytes, formatNumber } from "./data";
-import { formatCompact, longMonth, niceStep, shortMonth, useElementWidth } from "./charts";
+import { formatCompact, longMonth, niceStep, openingIndex, shortMonth, useElementWidth, useScrollLeft } from "./charts";
 import styles from "./Charts.module.css";
 
 const HEIGHT = 300;
-const MARGIN = { top: 12, right: 16, bottom: 40, left: 60 };
+// The y-axis stays put while the plot scrolls
+const AXIS_WIDTH = 44;
+const MARGIN = { top: 12, right: 16, bottom: 40, left: 16 };
 const FILL_OPACITY = 0.18;
 
 const METRICS = {
@@ -25,18 +27,18 @@ function linePath(points) {
   return points.map(([x, y], i) => `${i ? "L" : "M"}${x},${y}`).join("");
 }
 
-// Running total of bytes (or files) by month, stacked by modality
+// Running total of bytes (or files) by month, stacked by modality. It opens at TIME_CHART_START, and
+// earlier months are a scroll away.
 export default memo(function ActivityChart({ files, basis, months, modalities }) {
   const [metric, setMetric] = useState("size");
   const [active, setActive] = useState(null);
-  const plotRef = useRef(null);
-  const width = useElementWidth(plotRef);
+  const scrollRef = useRef(null);
+  // The plot's visible width
+  const width = useElementWidth(scrollRef);
+  const opening = openingIndex(months);
 
-  // Files dated before the first month start the running totals
-  const { byMonth, before, earlier, undated } = useMemo(() => {
+  const { byMonth, undated } = useMemo(() => {
     const result = new Map(months.map((month) => [month, new Map()]));
-    const before = new Map();
-    let earlier = 0;
     let missing = 0;
     for (const file of files) {
       const date = file[basis];
@@ -44,30 +46,25 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
         missing += 1;
         continue;
       }
-      const month = date.slice(0, 7);
-      const isEarlier = months.length > 0 && month < months[0];
-      const row = isEarlier ? before : result.get(month);
+      const row = result.get(date.slice(0, 7));
       if (!row) continue;
-      if (isEarlier) earlier += 1;
       const cell = row.get(file.Modality) ?? { files: 0, bytes: 0 };
       cell.files += 1;
       cell.bytes += file.size;
       row.set(file.Modality, cell);
     }
-    return { byMonth: result, before, earlier, undated: missing };
+    return { byMonth: result, undated: missing };
   }, [files, basis, months]);
 
   const { value, format, tick } = METRICS[metric];
-  const shown = modalities.filter(
-    (modality) => before.has(modality) || months.some((month) => byMonth.get(month).has(modality)),
-  );
+  const shown = modalities.filter((modality) => months.some((month) => byMonth.get(month).has(modality)));
   const valueOf = (month, modality) => {
     const cell = byMonth.get(month).get(modality);
     return cell ? value(cell) : 0;
   };
   const running = Object.fromEntries(
     shown.map((modality) => {
-      let sum = before.has(modality) ? value(before.get(modality)) : 0;
+      let sum = 0;
       return [modality, months.map((month) => (sum += valueOf(month, modality)))];
     }),
   );
@@ -75,19 +72,38 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
   const added = months.map((month) => shown.reduce((sum, modality) => sum + valueOf(month, modality), 0));
   const verb = basis.toLowerCase();
 
+  let axis = null;
   let chart = null;
   let tooltip = null;
+  let scrollTo = 0;
+  const innerHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
+  const max = totals[totals.length - 1] ?? 0;
+  const step = metric === "files" ? Math.max(1, niceStep(max)) : niceStep(max);
+  const tickCount = Math.max(1, Math.ceil(max / step));
+  const ticks = Array.from({ length: tickCount + 1 }, (_, i) => i * step);
+  const y = (v) => MARGIN.top + innerHeight - (v / (tickCount * step)) * innerHeight;
+
+  // Rendered before the plot is measured, so that the plot's width stays the same
+  if (shown.length > 0) {
+    axis = (
+      <svg width={AXIS_WIDTH} height={HEIGHT} aria-hidden="true">
+        {ticks.map((t) => (
+          <text key={t} x={AXIS_WIDTH - 6} y={y(t) + 4} textAnchor="end" fontSize="11" fill="var(--ifm-color-emphasis-700)">
+            {tick(t)}
+          </text>
+        ))}
+      </svg>
+    );
+  }
   if (width > 0 && shown.length > 0) {
-    const innerWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
-    const innerHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
-    const max = totals[totals.length - 1];
-    const step = metric === "files" ? Math.max(1, niceStep(max)) : niceStep(max);
-    const tickCount = Math.max(1, Math.ceil(max / step));
-    const top = tickCount * step;
-    const y = (v) => MARGIN.top + innerHeight - (v / top) * innerHeight;
+    // The months from the opening one fill the visible width, and earlier ones extend to the left
+    const visibleWidth = Math.max(0, width - MARGIN.left - MARGIN.right);
     const count = months.length;
-    const spacing = count > 1 ? innerWidth / (count - 1) : innerWidth;
-    const x = (i) => MARGIN.left + (count > 1 ? i * spacing : innerWidth / 2);
+    const spacing = count > 1 ? visibleWidth / Math.max(1, count - 1 - opening) : visibleWidth;
+    const x = (i) => MARGIN.left + (count > 1 ? i * spacing : visibleWidth / 2);
+    const plotRight = count > 1 ? x(count - 1) : MARGIN.left + visibleWidth;
+    const plotWidth = plotRight + MARGIN.right;
+    scrollTo = opening * spacing;
     const labelEvery = spacing >= 30 ? 1 : spacing >= 12 ? 3 : 6;
 
     const marker = count === 1 ? 0 : active;
@@ -102,23 +118,19 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
 
     chart = (
       <svg
-        width={width}
+        width={plotWidth}
         height={HEIGHT}
         role="group"
         aria-label={`Running total of ${METRICS[metric].label.toLowerCase()} ${verb}, stacked by modality`}>
-        {Array.from({ length: tickCount + 1 }, (_, i) => i * step).map((t) => (
-          <g key={t}>
-            <line
-              x1={MARGIN.left}
-              x2={width - MARGIN.right}
-              y1={y(t)}
-              y2={y(t)}
-              stroke={t === 0 ? "var(--ifm-color-emphasis-400)" : "var(--ifm-color-emphasis-200)"}
-            />
-            <text x={MARGIN.left - 8} y={y(t) + 4} textAnchor="end" fontSize="11" fill="var(--ifm-color-emphasis-700)">
-              {tick(t)}
-            </text>
-          </g>
+        {ticks.map((t) => (
+          <line
+            key={t}
+            x1="0"
+            x2={plotRight}
+            y1={y(t)}
+            y2={y(t)}
+            stroke={t === 0 ? "var(--ifm-color-emphasis-400)" : "var(--ifm-color-emphasis-200)"}
+          />
         ))}
 
         {months.map((month, i) => {
@@ -194,8 +206,8 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
         )}
 
         {months.map((month, i) => {
-          const left = Math.max(MARGIN.left, x(i) - spacing / 2);
-          const right = Math.min(MARGIN.left + innerWidth, x(i) + spacing / 2);
+          const left = Math.max(0, x(i) - spacing / 2);
+          const right = Math.min(plotRight, x(i) + spacing / 2);
           const parts = shown.filter((modality) => running[modality][i] > 0);
           return (
             <g
@@ -227,14 +239,16 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
     if (active !== null && active < months.length) {
       const month = months[active];
       const rows = shown.map((modality) => [modality, running[modality][active]]).filter(([, v]) => v > 0);
-      const position = x(active);
-      const onRight = position < width * 0.6;
+      // Within the chart, beside the axis and the plot's visible part
+      const frameWidth = AXIS_WIDTH + width;
+      const position = AXIS_WIDTH + x(active) - (scrollRef.current?.scrollLeft ?? 0);
+      const onRight = position < frameWidth * 0.6;
       tooltip = (
         <div
           className={styles.tooltip}
           style={{
             left: onRight ? position + 12 : undefined,
-            right: onRight ? undefined : width - position + 12,
+            right: onRight ? undefined : frameWidth - position + 12,
             top: MARGIN.top,
           }}>
           <div className={styles.tooltipTitle}>By the end of {longMonth(month)}</div>
@@ -261,24 +275,32 @@ export default memo(function ActivityChart({ files, basis, months, modalities })
     }
   }
 
+  // Open at TIME_CHART_START, and go back there whenever its position changes
+  useScrollLeft(scrollRef, scrollTo);
+
   return (
     <ChartCard
       id="data-over-time"
       title={`Data ${verb} over time`}
       actions={<Segmented small label="Measure" value={metric} onChange={setMetric} options={METRIC_OPTIONS} />}>
       {shown.length > 0 && <ModalityLegend names={shown} className={styles.legend} />}
-      {/* Always mounted, to measure its width */}
-      <div className={styles.plot} ref={plotRef} onPointerLeave={() => setActive(null)}>
-        {shown.length === 0 ? <div className={styles.empty}>No dated files match these filters.</div> : chart}
+      <div className={styles.plot} onPointerLeave={() => setActive(null)}>
+        <div className={styles.pinned}>
+          {axis}
+          {/* Always mounted, to measure its width */}
+          <div className={styles.scroll} ref={scrollRef} onScroll={() => setActive(null)}>
+            {shown.length === 0 ? <div className={styles.empty}>No dated files match these filters.</div> : chart}
+          </div>
+        </div>
         {tooltip}
       </div>
 
-      {earlier > 0 && months.length > 0 && (
+      {chart && opening > 0 && (
         <p className={styles.note}>
-          {countOf(earlier, "file")} {verb} before {longMonth(months[0])} {earlier === 1 ? "is" : "are"} included in the
-          running totals from that month.
+          Scroll back to see data {verb} before {longMonth(months[opening])}.
         </p>
       )}
+
       {undated > 0 && (
         <p className={styles.note}>
           {countOf(undated, "file has", "files have")} no {verb} date yet and {undated === 1 ? "isn't" : "aren't"} shown.

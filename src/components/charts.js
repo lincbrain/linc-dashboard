@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -17,8 +17,20 @@ export function longMonth(month) {
   });
 }
 
-// The time charts start here, even when earlier data exists
+// The time charts open scrolled to this month when they have earlier months, which are a scroll away
 export const TIME_CHART_START = "2023-01";
+
+// The index of the month a time chart opens at: TIME_CHART_START, if it is one of the months
+export function openingIndex(months) {
+  return Math.max(0, months.indexOf(TIME_CHART_START));
+}
+
+// Scrolls the element to `left` whenever `left` changes
+export function useScrollLeft(ref, left) {
+  useLayoutEffect(() => {
+    if (ref.current) ref.current.scrollLeft = left;
+  }, [ref, left]);
+}
 
 export function monthRange(first, last) {
   const months = [];
